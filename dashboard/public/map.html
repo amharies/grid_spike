@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI 02 — Grid Matrix Command Center</title>
+
+  <!-- Google Fonts: Orbitron / Share Tech Mono / Inter for Tactical Sci-Fi UI -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700;800&family=Orbitron:wght@600;800;900&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #040812;
+      --panel-bg: rgba(8, 14, 28, 0.92);
+      --border-blue: #1b355a;
+      --border-cyan: #00d2ff;
+      --cyan: #00f0ff;
+      --cyan-dim: rgba(0, 240, 255, 0.15);
+      --red: #ff3b30;
+      --red-glow: rgba(255, 59, 48, 0.4);
+      --amber: #ff9500;
+      --green: #34c759;
+      --text: #e1f5fe;
+      --muted: #6482ad;
+      --dim: #253a56;
+    }
+
+    html, body {
+      height: 100%; width: 100%; overflow: hidden;
+      font-family: 'Chakra Petch', 'Inter', sans-serif;
+      background: var(--bg); color: var(--text);
+      user-select: none;
+    }
+
+    /* CRT / Tactical Overlay Effect */
+    body::before {
+      content: " ";
+      display: block; position: absolute; top: 0; left: 0; bottom: 0; right: 0;
+      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
+      background-size: 100% 4px;
+      z-index: 999; pointer-events: none; opacity: 0.4;
+    }
+
+    /* ── LAYOUT CONTAINER ────────────────────────────────────────── */
+    #app {
+      display: grid;
+      grid-template-rows: 48px 1fr 28px;
+      grid-template-columns: 1fr 380px;
+      height: 100vh; width: 100vw;
+    }
+
+    /* ── HEADER ──────────────────────────────────────────────────── */
+    header {
+      grid-column: 1 / -1;
+      background: #060d1b;
+      border-bottom: 2px solid #142847;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 16px; font-family: 'Orbitron', sans-serif;
+      box-shadow: 0 4px 20px rgba(0, 240, 255, 0.1);
+      z-index: 100;
+    }
+
+    .brand {
+      display: flex; align-items: center; gap: 12px;
+      font-size: 14px; font-weight: 800; letter-spacing: 0.08em; color: var(--cyan);
+      text-shadow: 0 0 12px rgba(0, 240, 255, 0.6);
+    }
+    .brand-tag {
+      font-size: 10px; padding: 2px 8px; border: 1px solid var(--border-cyan);
+      background: rgba(0, 240, 255, 0.1); color: #ffffff; border-radius: 2px;
+    }
+
+    .hdr-metrics {
+      display: flex; align-items: center; gap: 24px; font-size: 12px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .hdr-stat { display: flex; align-items: center; gap: 8px; }
+    .hdr-stat .lbl { color: var(--muted); font-size: 10px; }
+    .hdr-stat .val { color: var(--text); font-weight: 700; }
+    .hdr-stat .val.red { color: var(--red); text-shadow: 0 0 8px var(--red-glow); }
+    .hdr-stat .val.cyan { color: var(--cyan); }
+
+    /* ── MAIN CANVAS AREA ────────────────────────────────────────── */
+    #viewport {
+      position: relative;
+      background: radial-gradient(circle at center, #09152a 0%, #03060d 100%);
+      overflow: hidden;
+      cursor: grab;
+    }
+    #viewport:active { cursor: grabbing; }
+
+    canvas { display: block; width: 100%; height: 100%; }
+
+    /* Viewport Overlay Controls */
+    .viewport-hud {
+      position: absolute; top: 16px; left: 16px; pointer-events: none;
+      display: flex; flex-direction: column; gap: 8px; z-index: 10;
+    }
+    .hud-title {
+      font-family: 'Orbitron', sans-serif; font-size: 11px; color: var(--cyan);
+      letter-spacing: 0.1em; text-transform: uppercase; background: rgba(4, 8, 18, 0.85);
+      border: 1px solid var(--border-blue); padding: 6px 12px; border-radius: 4px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.5); width: fit-content;
+    }
+
+    .viewport-tools {
+      position: absolute; top: 16px; right: 16px; z-index: 10;
+      display: flex; items-center; gap: 8px;
+    }
+    .tool-btn {
+      background: var(--panel-bg); border: 1px solid var(--border-blue);
+      color: var(--text); padding: 6px 12px; font-size: 11px; font-family: 'JetBrains Mono', monospace;
+      border-radius: 4px; cursor: pointer; transition: all 0.15s; display: flex; align-items: center; gap: 6px;
+    }
+    .tool-btn:hover, .tool-btn.active {
+      border-color: var(--cyan); color: var(--cyan); background: rgba(0, 240, 255, 0.15);
+      box-shadow: 0 0 10px rgba(0, 240, 255, 0.2);
+    }
+
+    .viewport-search {
+      position: absolute; bottom: 16px; left: 16px; z-index: 10;
+      display: flex; items-center; gap: 8px; background: var(--panel-bg);
+      border: 1px solid var(--border-blue); padding: 4px 8px; border-radius: 4px;
+    }
+    .viewport-search input {
+      background: transparent; border: none; outline: none; color: var(--text);
+      font-family: 'JetBrains Mono', monospace; font-size: 12px; width: 180px;
+    }
+    .viewport-search input::placeholder { color: var(--muted); }
+
+    /* ── TACTICAL RIGHT SIDEBAR ──────────────────────────────────── */
+    #sidebar {
+      background: #060d1b;
+      border-left: 2px solid #142847;
+      display: flex; flex-direction: column;
+      overflow-y: auto; padding: 16px; gap: 16px;
+    }
+
+    .panel-box {
+      background: rgba(10, 20, 38, 0.7);
+      border: 1px solid #1b355a;
+      border-radius: 4px; padding: 14px;
+      position: relative;
+    }
+    .panel-box::before {
+      content: ""; position: absolute; top: -1px; left: -1px; width: 8px; height: 8px;
+      border-top: 2px solid var(--cyan); border-left: 2px solid var(--cyan);
+    }
+    .panel-box::after {
+      content: ""; position: absolute; bottom: -1px; right: -1px; width: 8px; height: 8px;
+      border-bottom: 2px solid var(--cyan); border-right: 2px solid var(--cyan);
+    }
+
+    .panel-hdr {
+      font-family: 'Orbitron', sans-serif; font-size: 11px; font-weight: 700;
+      letter-spacing: 0.08em; color: var(--cyan); text-transform: uppercase;
+      margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px dashed #1b355a; padding-bottom: 6px;
+    }
+
+    /* Selected Household Telemetry */
+    .telemetry-id {
+      font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 800;
+      color: #ffffff; margin-bottom: 4px; word-break: break-all;
+    }
+    .risk-banner {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 8px 12px; border-radius: 4px; font-weight: 800; font-size: 12px;
+      letter-spacing: 0.05em; margin-bottom: 14px;
+    }
+    .risk-banner.critical { background: rgba(255, 59, 48, 0.2); border: 1px solid var(--red); color: var(--red); box-shadow: 0 0 15px var(--red-glow); }
+    .risk-banner.normal { background: rgba(52, 199, 89, 0.15); border: 1px solid var(--green); color: var(--green); }
+
+    .grid-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
+    .stat-tile { background: rgba(4, 10, 22, 0.8); border: 1px solid #162c4a; padding: 8px 10px; border-radius: 3px; }
+    .stat-tile .st-lbl { font-size: 9px; color: var(--muted); text-transform: uppercase; font-family: 'JetBrains Mono', monospace; }
+    .stat-tile .st-val { font-size: 14px; font-weight: 700; font-family: 'JetBrains Mono', monospace; color: var(--text); margin-top: 2px; }
+
+    /* Tactical Checklist (Jurassic Park Style) */
+    .checklist { display: flex; flex-direction: column; gap: 6px; }
+    .check-item {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 6px 10px; background: rgba(4, 10, 22, 0.9); border: 1px solid #162c4a;
+      font-size: 11px; font-family: 'JetBrains Mono', monospace; border-radius: 2px;
+    }
+    .check-tag {
+      font-size: 9px; font-weight: 800; padding: 2px 6px; border-radius: 2px; text-transform: uppercase;
+    }
+    .check-tag.alert { background: var(--red); color: #fff; box-shadow: 0 0 8px var(--red-glow); }
+    .check-tag.clear { background: rgba(52, 199, 89, 0.2); color: var(--green); border: 1px solid var(--green); }
+    .check-tag.check { background: rgba(255, 149, 0, 0.2); color: var(--amber); border: 1px solid var(--amber); }
+
+    /* Telemetry Mini Chart */
+    .mini-chart { height: 75px; width: 100%; margin-top: 8px; background: rgba(4, 8, 16, 0.9); border: 1px solid #142847; position: relative; }
+    canvas.chart-canvas { width: 100%; height: 100%; }
+
+    /* ── FOOTER STATUS BAR ───────────────────────────────────────── */
+    footer {
+      grid-column: 1 / -1; background: #030712; border-top: 1px solid #142847;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 16px; font-size: 10px; font-family: 'JetBrains Mono', monospace; color: var(--muted);
+    }
+    .status-indicator { display: flex; align-items: center; gap: 6px; }
+    .pulse-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); box-shadow: 0 0 8px var(--green); animation: pulse 1.5s infinite; }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+    /* Tooltip */
+    #grid-tooltip {
+      position: fixed; pointer-events: none; z-index: 1000;
+      background: rgba(6, 13, 27, 0.95); border: 1px solid var(--cyan);
+      box-shadow: 0 0 20px rgba(0, 240, 255, 0.3);
+      padding: 8px 12px; border-radius: 4px; font-family: 'JetBrains Mono', monospace;
+      display: none; transform: translate(12px, 12px);
+    }
+    #grid-tooltip .tt-id { font-weight: 700; font-size: 11px; color: #fff; }
+    #grid-tooltip .tt-val { font-size: 10px; color: var(--cyan); }
+  </style>
+</head>
+<body>
+
+  <div id="app">
+    <!-- HEADER -->
+    <header>
+      <div class="brand">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        ISLA NUBLAR SUBGRID MONITOR
+        <span class="brand-tag">TACTICAL MAP v2.0</span>
+      </div>
+
+      <div class="hdr-metrics">
+        <div class="hdr-stat"><span class="lbl">TOTAL HOUSEHOLDS:</span> <span class="val cyan" id="h-total">0</span></div>
+        <div class="hdr-stat"><span class="lbl">HIGH RISK ALERTS:</span> <span class="val red" id="h-critical">0</span></div>
+        <div class="hdr-stat"><span class="lbl">PRECISION@50:</span> <span class="val cyan">72.0%</span></div>
+        <div class="hdr-stat"><span class="lbl">AUC-PR:</span> <span class="val cyan">0.2272</span></div>
+      </div>
+    </header>
+
+    <!-- MAIN GRID CANVAS VIEWPORT -->
+    <div id="viewport">
+      <div class="viewport-hud">
+        <div class="hud-title">SECTOR MATRIX PLAN VIEW // EQUISPACED GRID</div>
+      </div>
+
+      <div class="viewport-tools">
+        <button class="tool-btn active" id="btn-all" onclick="setFilter('all')">ALL TILES</button>
+        <button class="tool-btn" id="btn-critical" onclick="setFilter('critical')">RED ALERTS ONLY</button>
+        <button class="tool-btn" onclick="resetTransform()">RESET VIEW</button>
+      </div>
+
+      <div class="viewport-search">
+        <input type="text" id="searchInput" placeholder="SEARCH ACCOUNT ID..." />
+      </div>
+
+      <canvas id="gridCanvas"></canvas>
+    </div>
+
+    <!-- TACTICAL SIDEBAR -->
+    <div id="sidebar">
+      <!-- PANEL 1: HOUSEHOLD TELEMETRY -->
+      <div class="panel-box">
+        <div class="panel-hdr">
+          <span>HOUSEHOLD STATUS</span>
+          <span style="font-size:9px; color:var(--muted)" id="sec-code">GRID SECTOR A-1</span>
+        </div>
+
+        <div id="selected-content">
+          <div class="telemetry-id" id="sel-id">SELECT A HOUSEHOLD BOX</div>
+          <div className="risk-banner normal" id="sel-banner">CLICK ANY GRID TILE TO INSPECT</div>
+
+          <div class="grid-stats">
+            <div class="stat-tile"><div class="st-lbl">RISK SCORE</div><div class="st-val" id="sel-risk">—</div></div>
+            <div class="stat-tile"><div class="st-lbl">GLOBAL RANK</div><div class="st-val" id="sel-rank">—</div></div>
+            <div class="stat-tile"><div class="st-lbl">DROP MAGNITUDE</div><div class="st-val" id="sel-drop">—</div></div>
+            <div class="stat-tile"><div class="st-lbl">ANOMALY SCORE</div><div class="st-val" id="sel-anomaly">—</div></div>
+          </div>
+
+          <div class="panel-hdr" style="margin-top:12px">BEHAVIOUR TELEMETRY (90D)</div>
+          <div class="mini-chart">
+            <canvas id="telemetryChart" class="chart-canvas"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- PANEL 2: TACTICAL CHECKLIST -->
+      <div class="panel-box">
+        <div class="panel-hdr">SYS DIAGNOSTIC CHECKS</div>
+        <div class="checklist" id="diagnostic-list">
+          <div class="check-item"><span>CUSUM Shift Trigger</span> <span class="check-tag clear" id="chk-cusum">CLEAR</span></div>
+          <div class="check-item"><span>Isolation Forest Score</span> <span class="check-tag clear" id="chk-iso">CLEAR</span></div>
+          <div class="check-item"><span>Missingness Anomaly</span> <span class="check-tag clear" id="chk-miss">CLEAR</span></div>
+          <div class="check-item"><span>Peer Group Discrepancy</span> <span class="check-tag clear" id="chk-peer">CLEAR</span></div>
+        </div>
+      </div>
+
+      <!-- PANEL 3: GRID SUMMARY -->
+      <div class="panel-box">
+        <div class="panel-hdr">GRID OVERVIEW</div>
+        <div style="font-size:11px; color:var(--muted); line-height: 1.5">
+          Each tile represents a unique customer meter account arranged in an equal-spaced matrix layout.
+          <br/><br/>
+          <span style="color:var(--red); font-weight:700">RED TILES</span>: Sustained consumption drop / High anomaly risk.
+          <br/>
+          <span style="color:var(--cyan); font-weight:700">BLUE/CYAN TILES</span>: Normal operating behavior.
+        </div>
+      </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer>
+      <div class="status-indicator">
+        <div class="pulse-dot"></div>
+        SYSTEM OPERATIONAL // MODEL O2 ENGINE ACTIVE
+      </div>
+      <div>USE MOUSE WHEEL TO ZOOM // DRAG TO PAN GRID</div>
+      <div>DRAWING NO: 305-GRID-MATRIX</div>
+    </footer>
+  </div>
+
+  <!-- TOOLTIP -->
+  <div id="grid-tooltip">
+    <div class="tt-id" id="tt-id"></div>
+    <div class="tt-val" id="tt-val"></div>
+  </div>
+
+<script>
+/* ================================================================
+   GRID MATRIX CONTROLLER
+   ================================================================ */
+const API_BASE = 'http://localhost:8000';
+
+let accounts = [];
+let gridData = []; // flattened matrix of household box objects
+let activeFilter = 'all';
+
+// Transform matrix state (Smooth Pan & Zoom)
+let scale = 1.0;
+let targetScale = 1.0;
+let panX = 40;
+let panY = 40;
+let targetPanX = 40;
+let targetPanY = 40;
+
+let isDragging = false;
+let startX = 0, startY = 0;
+let selectedAccount = null;
+let hoveredAccount = null;
+
+// Grid layout settings
+const BOX_SIZE = 48; // Size of each square household box
+const BOX_GAP = 12;  // Equal spacing between boxes
+const COLS = 32;     // Number of columns in the grid matrix
+
+const canvas = document.getElementById('gridCanvas');
+const ctx = canvas.getContext('2d');
+const viewport = document.getElementById('viewport');
+
+/* ── Fetch Data ─────────────────────────────────────────────────── */
+async function loadData() {
+  try {
+    const res = await fetch(`${API_BASE}/api/accounts?limit=1024`);
+    accounts = await res.json();
+  } catch (err) {
+    console.warn("API offline, fallback dummy data generated", err);
+    // Generate dummy grid data if backend offline
+    accounts = Array.from({ length: 500 }, (_, i) => ({
+      CONS_NO: `ACC_${(10000 + i).toString(16).toUpperCase()}`,
+      risk_score: Math.random() < 0.08 ? 0.85 + Math.random() * 0.14 : Math.random() * 0.4,
+      recent_mean_shift: -0.1 - Math.random() * 0.6,
+      anomaly_score: Math.random() * 0.8,
+      rank: i + 1
+    }));
+  }
+
+  // Build Grid Positions (Equal Spacing Matrix)
+  gridData = accounts.map((acc, i) => {
+    const col = i % COLS;
+    const row = Math.floor(i / COLS);
+    const x = col * (BOX_SIZE + BOX_GAP);
+    const y = row * (BOX_SIZE + BOX_GAP);
+    const isCritical = acc.risk_score >= 0.75;
+    const isHigh = acc.risk_score >= 0.5;
+
+    return {
+      ...acc,
+      col, row, x, y,
+      isCritical,
+      isHigh,
+      color: isCritical ? '#ff3b30' : isHigh ? '#ff9500' : acc.risk_score >= 0.25 ? '#00d2ff' : '#0e2442'
+    };
+  });
+
+  // Update Header Metrics
+  document.getElementById('h-total').textContent = accounts.length;
+  document.getElementById('h-critical').textContent = accounts.filter(a => a.risk_score >= 0.75).length;
+
+  // Auto Select top critical account
+  if (gridData.length > 0) {
+    selectAccount(gridData[0]);
+  }
+}
+
+/* ── Canvas Resize & Animation Loop ────────────────────────────── */
+function resizeCanvas() {
+  canvas.width = viewport.clientWidth;
+  canvas.height = viewport.clientHeight;
+}
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
+
+function animate() {
+  // Smooth Lerp Pan & Zoom
+  scale += (targetScale - scale) * 0.15;
+  panX += (targetPanX - panX) * 0.15;
+  panY += (targetPanY - panY) * 0.15;
+
+  render();
+  requestAnimationFrame(animate);
+}
+
+/* ── Render Sci-Fi Blueprint Grid & Boxes ───────────────────────── */
+function render() {
+  const w = canvas.width;
+  const h = canvas.height;
+
+  ctx.clearRect(0, 0, w, h);
+
+  ctx.save();
+  ctx.translate(panX, panY);
+  ctx.scale(scale, scale);
+
+  // 1. Draw Background Blueprint Grid Lines
+  const bgGridSize = (BOX_SIZE + BOX_GAP);
+  ctx.strokeStyle = 'rgba(20, 40, 70, 0.4)';
+  ctx.lineWidth = 1 / scale;
+
+  const startCol = Math.floor(-panX / (bgGridSize * scale)) - 2;
+  const endCol = Math.ceil((w - panX) / (bgGridSize * scale)) + COLS + 2;
+  const startRow = Math.floor(-panY / (bgGridSize * scale)) - 2;
+  const endRow = Math.ceil((h - panY) / (bgGridSize * scale)) + Math.ceil(gridData.length / COLS) + 2;
+
+  ctx.beginPath();
+  for (let c = startCol; c <= endCol; c++) {
+    ctx.moveTo(c * bgGridSize, startRow * bgGridSize);
+    ctx.lineTo(c * bgGridSize, endRow * bgGridSize);
+  }
+  for (let r = startRow; r <= endRow; r++) {
+    ctx.moveTo(startCol * bgGridSize, r * bgGridSize);
+    ctx.lineTo(endCol * bgGridSize, r * bgGridSize);
+  }
+  ctx.stroke();
+
+  // 2. Draw Sector Coordinate Markers
+  ctx.font = '10px "JetBrains Mono", monospace';
+  ctx.fillStyle = 'rgba(0, 240, 255, 0.3)';
+  for (let c = 0; c < COLS; c += 4) {
+    ctx.fillText(`COL ${String(c+1).padStart(2,'0')}`, c * bgGridSize, -10);
+  }
+
+  // 3. Render Household Boxes
+  const time = Date.now() * 0.003;
+
+  gridData.forEach(box => {
+    // Filter logic
+    if (activeFilter === 'critical' && !box.isCritical) return;
+
+    const isSelected = selectedAccount && selectedAccount.CONS_NO === box.CONS_NO;
+    const isHovered = hoveredAccount && hoveredAccount.CONS_NO === box.CONS_NO;
+
+    ctx.save();
+    ctx.translate(box.x, box.y);
+
+    if (box.isCritical) {
+      // Glowing Red Alert Box
+      const pulse = Math.sin(time + box.row) * 0.3 + 0.7;
+      ctx.shadowColor = '#ff3b30';
+      ctx.shadowBlur = 12 * pulse;
+      ctx.fillStyle = `rgba(255, 59, 48, ${0.3 + pulse * 0.25})`;
+      ctx.fillRect(0, 0, BOX_SIZE, BOX_SIZE);
+
+      ctx.strokeStyle = '#ff3b30';
+      ctx.lineWidth = isSelected ? 3 : 1.5;
+      ctx.strokeRect(0, 0, BOX_SIZE, BOX_SIZE);
+
+      // Warning Icon / Cross in center
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.9)';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(BOX_SIZE * 0.3, BOX_SIZE * 0.3);
+      ctx.lineTo(BOX_SIZE * 0.7, BOX_SIZE * 0.7);
+      ctx.moveTo(BOX_SIZE * 0.7, BOX_SIZE * 0.3);
+      ctx.lineTo(BOX_SIZE * 0.3, BOX_SIZE * 0.7);
+      ctx.stroke();
+    } else {
+      // Normal / Moderate Cyan Tile
+      ctx.shadowBlur = 0;
+      ctx.fillStyle = isSelected ? 'rgba(0, 240, 255, 0.3)' : isHovered ? 'rgba(0, 210, 255, 0.2)' : box.color;
+      ctx.fillRect(0, 0, BOX_SIZE, BOX_SIZE);
+
+      ctx.strokeStyle = isSelected ? '#00f0ff' : 'rgba(27, 53, 90, 0.8)';
+      ctx.lineWidth = isSelected ? 2 : 1;
+      ctx.strokeRect(0, 0, BOX_SIZE, BOX_SIZE);
+    }
+
+    // Inner Corner Brackets for Sci-Fi aesthetic
+    if (isSelected || isHovered) {
+      ctx.strokeStyle = '#ffffff';
+      ctx.lineWidth = 2;
+      const b = 6;
+      ctx.beginPath();
+      // Top Left
+      ctx.moveTo(0, b); ctx.lineTo(0, 0); ctx.lineTo(b, 0);
+      // Bottom Right
+      ctx.moveTo(BOX_SIZE, BOX_SIZE - b); ctx.lineTo(BOX_SIZE, BOX_SIZE); ctx.lineTo(BOX_SIZE - b, BOX_SIZE);
+      ctx.stroke();
+    }
+
+    // Label inside Box (Household short index)
+    ctx.fillStyle = box.isCritical ? '#ffffff' : 'rgba(225, 245, 254, 0.6)';
+    ctx.font = '9px "JetBrains Mono", monospace';
+    ctx.fillText(`#${box.rank}`, 4, 14);
+
+    ctx.restore();
+  });
+
+  ctx.restore();
+}
+
+/* ── Mouse Pan & Zoom Interactivity ─────────────────────────────── */
+viewport.addEventListener('mousedown', (e) => {
+  if (e.button !== 0) return;
+  isDragging = true;
+  startX = e.clientX - panX;
+  startY = e.clientY - panY;
+});
+
+window.addEventListener('mousemove', (e) => {
+  if (isDragging) {
+    targetPanX = e.clientX - startX;
+    targetPanY = e.clientY - startY;
+  }
+
+  // Hover detection
+  const rect = canvas.getBoundingClientRect();
+  const mx = (e.clientX - rect.left - panX) / scale;
+  const my = (e.clientY - rect.top - panY) / scale;
+
+  const found = gridData.find(b =>
+    mx >= b.x && mx <= b.x + BOX_SIZE &&
+    my >= b.y && my <= b.y + BOX_SIZE
+  );
+
+  hoveredAccount = found || null;
+
+  const tooltip = document.getElementById('grid-tooltip');
+  if (found) {
+    tooltip.style.display = 'block';
+    tooltip.style.left = `${e.clientX}px`;
+    tooltip.style.top = `${e.clientY}px`;
+    document.getElementById('tt-id').textContent = found.CONS_NO;
+    document.getElementById('tt-val').textContent = `RISK: ${(found.risk_score).toFixed(4)} | RANK: #${found.rank}`;
+  } else {
+    tooltip.style.display = 'none';
+  }
+});
+
+window.addEventListener('mouseup', () => { isDragging = false; });
+
+viewport.addEventListener('click', (e) => {
+  if (hoveredAccount) {
+    selectAccount(hoveredAccount);
+  }
+});
+
+viewport.addEventListener('wheel', (e) => {
+  e.preventDefault();
+  const zoomFactor = e.deltaY < 0 ? 1.15 : 0.85;
+  const nextScale = Math.min(Math.max(targetScale * zoomFactor, 0.4), 3.5);
+
+  // Zoom toward cursor position
+  const rect = canvas.getBoundingClientRect();
+  const mouseX = e.clientX - rect.left;
+  const mouseY = e.clientY - rect.top;
+
+  targetPanX = mouseX - (mouseX - targetPanX) * (nextScale / targetScale);
+  targetPanY = mouseY - (mouseY - targetPanY) * (nextScale / targetScale);
+  targetScale = nextScale;
+}, { passive: false });
+
+/* ── Select & Inspect Account Telemetry ─────────────────────────── */
+function selectAccount(acc) {
+  selectedAccount = acc;
+
+  document.getElementById('sel-id').textContent = acc.CONS_NO;
+  document.getElementById('sel-risk').textContent = (acc.risk_score || 0).toFixed(4);
+  document.getElementById('sel-rank').textContent = `#${acc.rank || '—'}`;
+  document.getElementById('sel-drop').textContent = `${((acc.recent_mean_shift || 0) * 100).toFixed(1)}%`;
+  document.getElementById('sel-anomaly').textContent = (acc.anomaly_score || 0).toFixed(3);
+
+  const banner = document.getElementById('sel-banner');
+  if (acc.risk_score >= 0.75) {
+    banner.className = 'risk-banner critical';
+    banner.textContent = 'CRITICAL RISK // SUSTAINED ANOMALY';
+  } else {
+    banner.className = 'risk-banner normal';
+    banner.textContent = 'NORMAL OPERATING BASELINE';
+  }
+
+  // Update Diagnostic Checklist
+  document.getElementById('chk-cusum').className = (acc.cusum_score > 1000) ? 'check-tag alert' : 'check-tag clear';
+  document.getElementById('chk-cusum').textContent = (acc.cusum_score > 1000) ? 'ALERT' : 'CLEAR';
+
+  document.getElementById('chk-iso').className = (acc.anomaly_score > 0.5) ? 'check-tag alert' : 'check-tag clear';
+  document.getElementById('chk-iso').textContent = (acc.anomaly_score > 0.5) ? 'ALERT' : 'CLEAR';
+
+  document.getElementById('chk-miss').className = (acc.missing_pct_shift > 0.1) ? 'check-tag check' : 'check-tag clear';
+  document.getElementById('chk-miss').textContent = (acc.missing_pct_shift > 0.1) ? 'CHECK' : 'CLEAR';
+
+  drawTelemetryChart(acc);
+}
+
+/* ── Render Mini Telemetry Chart ────────────────────────────────── */
+function drawTelemetryChart(acc) {
+  const chartCanvas = document.getElementById('telemetryChart');
+  const cctx = chartCanvas.getContext('2d');
+  chartCanvas.width = chartCanvas.clientWidth;
+  chartCanvas.height = chartCanvas.clientHeight;
+
+  const cw = chartCanvas.width;
+  const ch = chartCanvas.height;
+
+  cctx.clearRect(0, 0, cw, ch);
+
+  // Generate synthetic telemetry matching account drop
+  const points = 40;
+  const baseline = ch * 0.3;
+  const dropAmount = acc.risk_score >= 0.75 ? ch * 0.4 : 0;
+
+  cctx.strokeStyle = 'rgba(0, 240, 255, 0.4)';
+  cctx.setLineDash([4, 4]);
+  cctx.beginPath();
+  cctx.moveTo(0, baseline);
+  cctx.lineTo(cw, baseline);
+  cctx.stroke();
+  cctx.setLineDash([]);
+
+  // Actual curve
+  cctx.strokeStyle = acc.risk_score >= 0.75 ? '#ff3b30' : '#00f0ff';
+  cctx.lineWidth = 2;
+  cctx.beginPath();
+
+  for (let i = 0; i < points; i++) {
+    const px = (i / (points - 1)) * cw;
+    const isAfter = i > points / 2;
+    const py = baseline + (isAfter ? dropAmount : 0) + (Math.sin(i * 0.5) * 4);
+    if (i === 0) cctx.moveTo(px, py);
+    else cctx.lineTo(px, py);
+  }
+  cctx.stroke();
+}
+
+/* ── Toolbar Actions ────────────────────────────────────────────── */
+function setFilter(filter) {
+  activeFilter = filter;
+  document.getElementById('btn-all').classList.toggle('active', filter === 'all');
+  document.getElementById('btn-critical').classList.toggle('active', filter === 'critical');
+}
+
+function resetTransform() {
+  targetScale = 1.0;
+  targetPanX = 40;
+  targetPanY = 40;
+}
+
+// Search Handler
+document.getElementById('searchInput').addEventListener('input', (e) => {
+  const q = e.target.value.trim().toUpperCase();
+  if (!q) return;
+
+  const match = gridData.find(b => b.CONS_NO.includes(q));
+  if (match) {
+    selectAccount(match);
+    // Center pan on matched box
+    targetPanX = (viewport.clientWidth / 2) - (match.x * scale);
+    targetPanY = (viewport.clientHeight / 2) - (match.y * scale);
+  }
+});
+
+/* ── Boot ────────────────────────────────────────────────────────── */
+loadData().then(() => {
+  animate();
+});
+</script>
+</body>
+</html>
