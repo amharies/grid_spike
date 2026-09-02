@@ -1,26 +1,4 @@
-# Output directories (generated CSVs & plots)
-outputs/
-*.csv
-
-# Datasets & Zip Archives
-*.zip
-*.z01
-*.z02
-ElectricityTheftDetection-master/
-
-# Dependencies & Build Files
+# Dependencies
 node_modules/
-dist/
-build/
-.env
-.env.local
-
-# Python Cache
 __pycache__/
 *.pyc
-*.pyo
-*.pyd
-
-# OS Files
-.DS_Store
-Thumbs.db
