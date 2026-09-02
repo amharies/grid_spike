@@ -232,26 +232,127 @@
     }
     #grid-tooltip .tt-id { font-weight: 700; font-size: 12px; color: #fff; }
     #grid-tooltip .tt-val { font-size: 11px; color: var(--gold); margin-top: 2px; }
-  </style>
+    /* ── Timeline UI ──────────────────────────────────────────────── */
+  .timeline-container {
+    position: absolute;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 600px;
+    background: rgba(5, 5, 8, 0.85);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    backdrop-filter: blur(12px);
+    z-index: 100;
+    font-family: 'Orbitron', sans-serif;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+  }
+  .timeline-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .timeline-training-info {
+    font-size: 10px;
+    color: var(--text-muted);
+    letter-spacing: 0.05em;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .timeline-controls {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  #timeline-play-btn {
+    background: transparent;
+    border: 1px solid var(--gold);
+    color: var(--gold);
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.2s;
+    outline: none;
+  }
+  #timeline-play-btn:hover {
+    background: rgba(255,153,0,0.1);
+    box-shadow: 0 0 12px var(--gold-glow);
+  }
+  .timeline-date {
+    font-size: 18px;
+    color: var(--gold);
+    font-weight: 700;
+    text-shadow: 0 0 8px var(--gold-glow);
+    font-variant-numeric: tabular-nums;
+  }
+  .timeline-track {
+    width: 100%;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+    position: relative;
+    overflow: hidden;
+  }
+  .timeline-progress {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 0%;
+    background: var(--gold);
+    box-shadow: 0 0 12px var(--gold);
+    transition: width 0.1s linear;
+  }
+</style>
 </head>
 <body>
 
   <div id="app">
     <!-- HEADER -->
-    <header>
-      <div class="brand">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-        AI 02 — SMART GRID INTELLIGENCE
-        <span class="brand-tag">ORGANIC SPATIAL PERCEPTION</span>
+    <header class="top-nav">
+      <div class="logo">
+        <div class="logo-icon"></div>
+        <div>
+          <div class="logo-text">AI o2 — SMART GRID INTELLIGENCE</div>
+          <div class="logo-sub">ORGANIC SPATIAL PERCEPTION</div>
+        </div>
       </div>
-
-      <div class="hdr-metrics">
-        <div class="hdr-stat"><span class="lbl">TOTAL CORPUS:</span> <span class="val gold">42,372</span></div>
-        <div class="hdr-stat"><span class="lbl">GRID DENSITY:</span> <span class="val gold" id="h-total">0</span></div>
-        <div class="hdr-stat"><span class="lbl">DETECTED RED CASES:</span> <span class="val red" id="h-critical">0</span></div>
-        <div class="hdr-stat"><span class="lbl">PRECISION@50:</span> <span class="val gold">72.0%</span></div>
+      <div class="stats-bar">
+        <div class="stat-item"><span class="stat-label">TOTAL CORPUS:</span> <span class="stat-value" id="tot-corp">42,372</span></div>
+        <div class="stat-item"><span class="stat-label">GRID DENSITY:</span> <span class="stat-value" id="grid-den">500</span></div>
+        <div class="stat-item"><span class="stat-label">DETECTED RED CASES:</span> <span class="stat-value" id="red-cases">0</span></div>
+        <div class="stat-item"><span class="stat-label">PRECISION@50:</span> <span class="stat-value text-gold">72.0%</span></div>
       </div>
     </header>
+
+    <!-- Timeline Playback UI -->
+    <div class="timeline-container">
+      <div class="timeline-top">
+        <div class="timeline-training-info">
+          MODEL TRAINING SPAN: <strong>JAN 2014 — OCT 2015</strong>
+        </div>
+        <div class="timeline-training-info" style="color: var(--gold)">
+          LIVE INFERENCE WINDOW
+        </div>
+      </div>
+      <div style="display: flex; justify-content: space-between; alignItems: center">
+        <div class="timeline-controls">
+          <button id="timeline-play-btn">▶</button>
+          <div class="timeline-date" id="timeline-current-date">NOV 01, 2015</div>
+        </div>
+      </div>
+      <div class="timeline-track">
+        <div class="timeline-progress" id="timeline-progress-bar"></div>
+      </div>
+    </div>
 
     <!-- MAIN GRID CANVAS VIEWPORT -->
     <div id="viewport">
@@ -921,6 +1022,50 @@ document.getElementById('searchInput').addEventListener('input', (e) => {
     selectAccount(match, true);
   }
 });
+
+/* ── Timeline Playback Logic ────────────────────────────────────── */
+let timelinePlaying = false;
+let timelineProgress = 0; // 0 to 1
+let timelineInterval;
+
+const startDate = new Date('2015-11-01T00:00:00Z');
+const endDate = new Date('2015-12-31T00:00:00Z');
+const totalTime = endDate.getTime() - startDate.getTime();
+
+function updateTimelineUI() {
+  const currentMs = startDate.getTime() + (totalTime * timelineProgress);
+  const currentD = new Date(currentMs);
+  
+  const month = currentD.toLocaleString('en-US', { month: 'short' }).toUpperCase();
+  const day = currentD.getDate().toString().padStart(2, '0');
+  const year = currentD.getFullYear();
+  
+  document.getElementById('timeline-current-date').textContent = `${month} ${day}, ${year}`;
+  document.getElementById('timeline-progress-bar').style.width = (timelineProgress * 100) + '%';
+}
+
+document.getElementById('timeline-play-btn').addEventListener('click', () => {
+  timelinePlaying = !timelinePlaying;
+  const btn = document.getElementById('timeline-play-btn');
+  if (timelinePlaying) {
+    btn.textContent = '⏸';
+    if (timelineProgress >= 1) timelineProgress = 0; // restart if finished
+    timelineInterval = setInterval(() => {
+      timelineProgress += 0.003; // speed of playback
+      if (timelineProgress >= 1) {
+        timelineProgress = 1;
+        timelinePlaying = false;
+        btn.textContent = '▶';
+        clearInterval(timelineInterval);
+      }
+      updateTimelineUI();
+    }, 30);
+  } else {
+    btn.textContent = '▶';
+    clearInterval(timelineInterval);
+  }
+});
+updateTimelineUI();
 
 /* ── Boot ────────────────────────────────────────────────────────── */
 loadData().then(() => {
