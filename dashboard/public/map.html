@@ -99,7 +99,7 @@
 
     canvas { display: block; width: 100%; height: 100%; }
 
-    /* Viewport Top Bar (CLEAN FLEX CONTAINER - NO TEXT OVERLAP) */
+    /* Viewport Top Bar (CLEAN FLEX CONTAINER - NO OVERLAP) */
     .viewport-bar {
       position: absolute; top: 14px; left: 14px; right: 14px; z-index: 10;
       display: flex; align-items: center; justify-content: space-between; gap: 16px;
@@ -224,7 +224,7 @@
       <div class="brand">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
         AI 02 — SMART GRID INTELLIGENCE
-        <span class="brand-tag">MODEL O2 RANKED DATASET</span>
+        <span class="brand-tag">SCATTERED SPATIAL MATRIX</span>
       </div>
 
       <div class="hdr-metrics">
@@ -239,9 +239,8 @@
     <div id="viewport">
       <!-- TOP BAR FLEX CONTAINER (NO OVERLAP) -->
       <div class="viewport-bar">
-        <div class="hud-title">SPACIOUS 3D GRID // RESTRICTED BOUNDED ZOOM</div>
+        <div class="hud-title">SCATTERED SPATIAL GRID // CLICK BOX TO FOCUS</div>
         <div class="viewport-tools">
-          <!-- ADJUSTABLE GRID SIZE DROPDOWN -->
           <label style="font-size:11px; color:var(--muted); font-family:'JetBrains Mono',monospace; display:flex; align-items:center; gap:6px;">
             GRID SIZE:
             <select id="gridLimitSelect" class="tool-select" onchange="changeGridLimit(this.value)">
@@ -328,7 +327,7 @@
         <div class="panel-hdr">SYSTEM FLEET STATUS</div>
         <div style="font-size:12px; color:var(--muted); line-height: 1.6">
           <strong style="color:var(--gold)">Corpus Coverage:</strong> 42,372 meters screened.<br/>
-          <strong style="color:var(--red)">Red Anomaly Threshold:</strong> Top 50 ranked high-risk accounts (>0.75 risk index).<br/>
+          <strong style="color:var(--red)">Red Anomaly Threshold:</strong> Top 50 ranked high-risk accounts scattered spatially.<br/>
           <strong style="color:var(--text)">Precision Guarantee:</strong> 72% precision in top-50 queue.
         </div>
       </div>
@@ -338,7 +337,7 @@
     <footer>
       <div class="status-indicator">
         <div class="pulse-dot"></div>
-        SYSTEM OPERATIONAL // MODEL O2 ENGINE CONNECTED (42,372 ACCOUNTS)
+        SYSTEM OPERATIONAL // SCATTERED SPATIAL DISTRIBUTION ACTIVE
       </div>
       <div>RESTRICTED BOUNDED ZOOM ACTIVE</div>
     </footer>
@@ -352,14 +351,14 @@
 
 <script>
 /* ================================================================
-   GRID MATRIX CONTROLLER WITH ADJUSTABLE SIZE & BOUNDED ZOOM
+   SCATTERED SPATIAL GRID MATRIX CONTROLLER
    ================================================================ */
 const API_BASE = 'http://localhost:8000';
 
 let accounts = [];
 let gridData = [];
 let activeFilter = 'all';
-let currentLimit = 250; // Default grid size limit
+let currentLimit = 250;
 
 // Transform matrix state
 let scale = 0.75;
@@ -374,7 +373,6 @@ let startX = 0, startY = 0;
 let selectedAccount = null;
 let hoveredAccount = null;
 
-// Grid Matrix Layout Dimensions
 const BOX_SIZE = 80;
 const BOX_GAP = 56;
 const COLS = 14;
@@ -403,15 +401,18 @@ async function loadData(limit = currentLimit) {
     }));
   }
 
-  accounts.sort((a, b) => b.rank - a.rank ? (a.rank - b.rank) : (b.risk_score - a.risk_score));
+  // Deterministic Spatial Scattering Permutation
+  // Uses a coprimed hash multiplier so high-risk accounts are evenly scattered across the matrix slots
+  const totalTiles = accounts.length;
+  const scatteredSlots = Array.from({ length: totalTiles }, (_, i) => (i * 97) % totalTiles);
 
   gridData = accounts.map((acc, i) => {
-    const col = i % COLS;
-    const row = Math.floor(i / COLS);
+    const slotIdx = scatteredSlots[i];
+    const col = slotIdx % COLS;
+    const row = Math.floor(slotIdx / COLS);
     const x = col * (BOX_SIZE + BOX_GAP);
     const y = row * (BOX_SIZE + BOX_GAP);
     
-    // Top 50 ranked or normalized_risk_score >= 0.75 turn RED!
     const effectiveRisk = acc.normalized_risk_score ?? (acc.rank <= 50 ? 0.95 : 0.3);
     const isVeryHigh = effectiveRisk >= 0.75 || acc.rank <= 50;
     const isHigh = effectiveRisk >= 0.50 || acc.rank <= 150;
@@ -452,7 +453,7 @@ function resizeCanvas() {
 window.addEventListener('resize', resizeCanvas);
 resizeCanvas();
 
-/* ── Strict Zoom & Pan Bounding Logic (RESTRICT ZOOM OUT WITHIN GRID) ── */
+/* ── Strict Zoom & Pan Bounding Logic ──────────────────────────── */
 function clampBounds() {
   const gridW = COLS * (BOX_SIZE + BOX_GAP);
   const rows = Math.ceil(gridData.length / COLS) || 10;
