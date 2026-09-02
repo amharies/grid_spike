@@ -855,17 +855,23 @@ function drawTelemetryChart(acc) {
   cctx.clearRect(0, 0, cw, ch);
 
   const points = 40;
-  const baseline = ch * 0.3;
+  const baseline = ch * 0.5; // Move baseline to center to allow spikes to go up and drops to go down
   
   let dropRatio = 0;
   if (acc.consumption_mean && acc.recent_mean) {
+     // if recent > consumption, dropRatio is negative (spike).
      dropRatio = (acc.consumption_mean - acc.recent_mean) / acc.consumption_mean;
-     if (dropRatio < 0) dropRatio = 0;
   } else if (acc.isVeryHigh) {
+     // fallback if no actual data
      dropRatio = 0.45;
   }
   
-  const dropAmount = Math.min(dropRatio, 0.7) * ch;
+  // Clamp to prevent drawing completely off canvas (Y goes down, so negative dropAmount goes UP on screen)
+  if (dropRatio > 0.8) dropRatio = 0.8;
+  if (dropRatio < -0.8) dropRatio = -0.8;
+  
+  // dropAmount in pixels (positive = down = drop, negative = up = spike)
+  const dropAmount = dropRatio * (ch * 0.45);
 
   // Expected Line
   cctx.strokeStyle = 'rgba(255, 153, 0, 0.4)';
