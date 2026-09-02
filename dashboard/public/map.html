@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AI 02 — Grid Matrix — Electricity Theft Detection</title>
+  <title>AI 02 — 3D Grid Matrix Command Center</title>
 
   <!-- Google Fonts: Orbitron / Inter / JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -21,7 +21,7 @@
       --cyan: #00f0ff;
       --cyan-dim: rgba(0, 240, 255, 0.15);
       --red: #ef4444;
-      --red-glow: rgba(239, 68, 68, 0.45);
+      --red-glow: rgba(239, 68, 68, 0.5);
       --amber: #f59e0b;
       --green: #10b981;
       --text: #f3f4f6;
@@ -36,7 +36,7 @@
       user-select: none;
     }
 
-    /* Subtle Tactical Scanline Overlay */
+    /* CRT Scanline Overlay */
     body::before {
       content: " ";
       display: block; position: absolute; top: 0; left: 0; bottom: 0; right: 0;
@@ -49,7 +49,7 @@
     #app {
       display: grid;
       grid-template-rows: 50px 1fr 28px;
-      grid-template-columns: 1fr 380px;
+      grid-template-columns: 1fr 400px;
       height: 100vh; width: 100vw;
     }
 
@@ -87,7 +87,7 @@
     /* ── MAIN CANVAS AREA ────────────────────────────────────────── */
     #viewport {
       position: relative;
-      background: radial-gradient(circle at center, #09152a 0%, #03060d 100%);
+      background: radial-gradient(circle at center, #0a1833 0%, #03060d 100%);
       overflow: hidden;
       cursor: grab;
     }
@@ -162,7 +162,6 @@
       border-bottom: 1px dashed #1b355a; padding-bottom: 6px;
     }
 
-    /* Selected Account Info */
     .telemetry-id {
       font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 800;
       color: #ffffff; margin-bottom: 4px; word-break: break-all;
@@ -228,8 +227,8 @@
     <header>
       <div class="brand">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-        AI 02 — BEHAVIOURAL ANOMALY SCREENING
-        <span class="brand-tag">BUILD 1.0 (MODEL O2)</span>
+        AI 02 — 3D ISOMETRIC GRID MATRIX
+        <span class="brand-tag">3D PERSPECTIVE ELEVATION</span>
       </div>
 
       <div class="hdr-metrics">
@@ -243,7 +242,7 @@
     <!-- MAIN GRID CANVAS VIEWPORT -->
     <div id="viewport">
       <div class="viewport-hud">
-        <div class="hud-title">SPACIOUS EQUISPACED MATRIX // CLICK BOX TO ANIMATE & ZOOM</div>
+        <div class="hud-title">SPACIOUS 3D GRID // CLICK BOX TO ELEVATE 3D & ZOOM</div>
       </div>
 
       <div class="viewport-tools">
@@ -264,13 +263,13 @@
       <!-- PANEL 1: HOUSEHOLD TELEMETRY -->
       <div class="panel-box">
         <div class="panel-hdr">
-          <span>ACCOUNT INVESTIGATION</span>
-          <span style="font-size:9px; color:var(--muted)" id="sec-code">MODEL RANKED</span>
+          <span>ACCOUNT INSPECTOR</span>
+          <span style="font-size:9px; color:var(--muted)" id="sec-code">3D TELEMETRY</span>
         </div>
 
         <div id="selected-content">
           <div class="telemetry-id" id="sel-id">SELECT A HOUSEHOLD BOX</div>
-          <div class="risk-banner normal" id="sel-banner">CLICK ANY BOX TO ZOOM</div>
+          <div class="risk-banner normal" id="sel-banner">CLICK ANY TILE TO ELEVATE 3D & ZOOM</div>
 
           <div class="grid-stats">
             <div class="stat-tile"><div class="st-lbl">RISK SCORE</div><div class="st-val" id="sel-risk">—</div></div>
@@ -291,21 +290,21 @@
         <div class="panel-hdr">EVIDENCE SUMMARY</div>
         <div class="checklist" id="diagnostic-list">
           <div class="check-item"><span>Change Point (CUSUM)</span> <span class="check-tag clear" id="chk-cusum">CLEAR</span></div>
-          <div class="check-item"><span>Isolation Forest Deviation</span> <span class="check-tag clear" id="chk-iso">CLEAR</span></div>
+          <div class="check-item"><span>Isolation Forest Anomaly</span> <span class="check-tag clear" id="chk-iso">CLEAR</span></div>
           <div class="check-item"><span>Missingness Shift</span> <span class="check-tag clear" id="chk-miss">CLEAR</span></div>
           <div class="check-item"><span>Peer Group Deviation</span> <span class="check-tag clear" id="chk-peer">CLEAR</span></div>
         </div>
       </div>
 
-      <!-- PANEL 3: SPEC & TERMINOLOGY COMPLIANCE -->
+      <!-- PANEL 3: 3D ACTION GUIDE -->
       <div class="panel-box">
-        <div class="panel-hdr">INVESTIGATION PRINCIPLE</div>
+        <div class="panel-hdr">3D INTERACTION GUIDE</div>
         <div style="font-size:11px; color:var(--muted); line-height: 1.5">
-          The system detects <strong style="color:var(--text)">behavioural anomalies</strong> to assist prioritization.
+          <strong style="color:var(--cyan)">CLICK TILE</strong>: The household box animates & <strong style="color:#ffffff">budges up vertically in 3D</strong> with perspective elevation depth!
           <br/><br/>
-          <span style="color:var(--red); font-weight:700">VERY HIGH RISK (≥0.75)</span>: Sustained consumption drop below expected baseline.
+          <span style="color:var(--red); font-weight:700">VERY HIGH RISK (≥0.75)</span>: Extruded 3D Red Alert Block.
           <br/>
-          <span style="color:var(--cyan); font-weight:700">LOW / MODERATE RISK</span>: Normal baseline behaviour.
+          <span style="color:var(--cyan); font-weight:700">SPACIOUS GRID</span>: Increased gap spacing (44px) between household blocks.
         </div>
       </div>
     </div>
@@ -314,10 +313,10 @@
     <footer>
       <div class="status-indicator">
         <div class="pulse-dot"></div>
-        SYSTEM HEALTHY // RANKED MODEL O2 PIPELINE
+        SYSTEM OPERATIONAL // 3D ISOMETRIC CONTROLLER
       </div>
-      <div>DRAG TO PAN // SCROLL TO ZOOM // CLICK BOX TO FOCUS</div>
-      <div>DRAWING NO: 305-GRID-MATRIX</div>
+      <div>DRAG TO PAN // SCROLL TO ZOOM // CLICK TO ELEVATE IN 3D</div>
+      <div>DRAWING NO: 305-3D-GRID</div>
     </footer>
   </div>
 
@@ -329,7 +328,7 @@
 
 <script>
 /* ================================================================
-   CLEAN & COMPLIANT GRID MATRIX CONTROLLER
+   SPACIOUS 3D ISOMETRIC MATRIX CONTROLLER WITH 3D ELEVATION POP
    ================================================================ */
 const API_BASE = 'http://localhost:8000';
 
@@ -337,23 +336,23 @@ let accounts = [];
 let gridData = [];
 let activeFilter = 'all';
 
-// Transform matrix state (Smooth Camera Pan & Zoom)
-let scale = 0.85;
-let targetScale = 0.85;
-let panX = 60;
-let panY = 60;
-let targetPanX = 60;
-let targetPanY = 60;
+// Transform matrix state
+let scale = 0.8;
+let targetScale = 0.8;
+let panX = 80;
+let panY = 80;
+let targetPanX = 80;
+let targetPanY = 80;
 
 let isDragging = false;
 let startX = 0, startY = 0;
 let selectedAccount = null;
 let hoveredAccount = null;
 
-// Spacious Equal Spacing Layout:
-const BOX_SIZE = 64; // Square household tile size
-const BOX_GAP = 28;  // Clean spacious gap between tiles
-const COLS = 20;     // 20 tiles per row
+// Increased Spacing & Tile Dimensions (More Spread Out Layout)
+const BOX_SIZE = 72; // Increased size of each household box
+const BOX_GAP = 44;  // Even wider spacing between tiles for breathable grid layout
+const COLS = 16;     // 16 tiles per row for spacious distribution
 
 const canvas = document.getElementById('gridCanvas');
 const ctx = canvas.getContext('2d');
@@ -366,41 +365,45 @@ async function loadData() {
     accounts = await res.json();
   } catch (err) {
     console.warn("API offline, using fallback dataset", err);
-    accounts = Array.from({ length: 200 }, (_, i) => ({
+    accounts = Array.from({ length: 160 }, (_, i) => ({
       CONS_NO: `ACC_${(10000 + i).toString(16).toUpperCase()}`,
-      risk_score: i < 35 ? 0.95 - (i * 0.005) : (i < 70 ? 0.6 - (i * 0.003) : 0.2 - (i * 0.0005)),
-      recent_mean_shift: i < 35 ? -0.45 - Math.random() * 0.3 : -0.05,
-      anomaly_score: i < 35 ? 0.75 : 0.2,
-      cusum_score: i < 35 ? 16000 : 300,
-      missing_pct_shift: i < 35 ? 0.15 : 0.01,
+      risk_score: i < 30 ? 0.95 - (i * 0.005) : (i < 60 ? 0.6 - (i * 0.003) : 0.2 - (i * 0.0005)),
+      recent_mean_shift: i < 30 ? -0.45 - Math.random() * 0.3 : -0.05,
+      anomaly_score: i < 30 ? 0.8 : 0.2,
+      cusum_score: i < 30 ? 16000 : 300,
+      missing_pct_shift: i < 30 ? 0.15 : 0.01,
       rank: i + 1
     }));
   }
 
-  // Ensure accounts are sorted by model risk score
   accounts.sort((a, b) => b.risk_score - a.risk_score);
 
-  // Map into spacious equal-spaced grid matrix
+  // Map into 3D Grid Positions with dynamic 3D Lift properties
   gridData = accounts.map((acc, i) => {
     const col = i % COLS;
     const row = Math.floor(i / COLS);
     const x = col * (BOX_SIZE + BOX_GAP);
     const y = row * (BOX_SIZE + BOX_GAP);
     
-    // Very High Risk presentation band from spec (>= 0.75)
     const isVeryHigh = acc.risk_score >= 0.75;
     const isHigh = acc.risk_score >= 0.50;
+
+    // Default 3D extrusion height based on risk
+    const baseExtrusion = isVeryHigh ? 24 : isHigh ? 16 : 8;
 
     return {
       ...acc,
       col, row, x, y,
       isVeryHigh,
       isHigh,
-      color: isVeryHigh ? '#ef4444' : isHigh ? '#f59e0b' : acc.risk_score >= 0.25 ? '#3b82f6' : '#0e2442'
+      baseExtrusion,
+      currentExtrusion: baseExtrusion, // Animated extrusion height
+      targetExtrusion: baseExtrusion,
+      liftY: 0,                         // 3D vertical budge/lift offset on click
+      targetLiftY: 0
     };
   });
 
-  // Update Header Metrics
   document.getElementById('h-total').textContent = accounts.length;
   document.getElementById('h-critical').textContent = gridData.filter(a => a.isVeryHigh).length;
 
@@ -423,11 +426,17 @@ function animate() {
   panX += (targetPanX - panX) * 0.12;
   panY += (targetPanY - panY) * 0.12;
 
+  // Lerp 3D Elevate & Budge Lift for all boxes
+  gridData.forEach(box => {
+    box.currentExtrusion += (box.targetExtrusion - box.currentExtrusion) * 0.15;
+    box.liftY += (box.targetLiftY - box.liftY) * 0.15;
+  });
+
   render();
   requestAnimationFrame(animate);
 }
 
-/* ── Render Blueprint Matrix & Tiles ────────────────────────────── */
+/* ── Render 3D Isometric Extruded Grid Blocks ──────────────────── */
 function render() {
   const w = canvas.width;
   const h = canvas.height;
@@ -459,7 +468,7 @@ function render() {
   }
   ctx.stroke();
 
-  // 2. Render Tiles
+  // 2. Render 3D Extruded Household Blocks
   const time = Date.now() * 0.003;
 
   gridData.forEach(box => {
@@ -469,22 +478,67 @@ function render() {
     const isHovered = hoveredAccount && hoveredAccount.CONS_NO === box.CONS_NO;
 
     ctx.save();
-    ctx.translate(box.x, box.y);
+    
+    // Apply 3D Budge Lift Offset (-liftY moves box upwards in 3D perspective space)
+    const renderY = box.y - box.liftY;
+    ctx.translate(box.x, renderY);
 
+    const h3d = box.currentExtrusion; // 3D height depth offset
+    const dx3d = h3d * 0.4;            // 3D perspective X skew offset
+    const dy3d = -h3d * 0.5;           // 3D perspective Y height offset
+
+    // Colors
+    let topColor, sideColor, outlineColor;
     if (box.isVeryHigh) {
-      // Very High Risk Red Box
-      const pulse = Math.sin(time + box.row) * 0.3 + 0.7;
+      const pulse = Math.sin(time + box.row) * 0.35 + 0.65;
+      topColor = `rgba(239, 68, 68, ${0.4 + pulse * 0.25})`;
+      sideColor = `rgba(180, 40, 40, ${0.7 + pulse * 0.2})`;
+      outlineColor = '#ef4444';
       ctx.shadowColor = '#ef4444';
-      ctx.shadowBlur = (isSelected ? 20 : 10) * pulse;
-      ctx.fillStyle = `rgba(239, 68, 68, ${0.35 + pulse * 0.25})`;
-      ctx.fillRect(0, 0, BOX_SIZE, BOX_SIZE);
+      ctx.shadowBlur = (isSelected ? 24 : 12) * pulse;
+    } else {
+      topColor = isSelected ? 'rgba(0, 240, 255, 0.45)' : isHovered ? 'rgba(0, 210, 255, 0.3)' : 'rgba(14, 36, 66, 0.85)';
+      sideColor = isSelected ? 'rgba(0, 160, 210, 0.6)' : 'rgba(8, 22, 44, 0.9)';
+      outlineColor = isSelected ? '#00f0ff' : 'rgba(0, 210, 255, 0.4)';
+      ctx.shadowColor = '#00f0ff';
+      ctx.shadowBlur = isSelected ? 16 : 0;
+    }
 
-      ctx.strokeStyle = '#ef4444';
-      ctx.lineWidth = isSelected ? 3 : 1.5;
-      ctx.strokeRect(0, 0, BOX_SIZE, BOX_SIZE);
+    // ── 3D SIDE FACES (3D Extrusion Perspective) ──────────────────
+    // Right Face
+    ctx.fillStyle = sideColor;
+    ctx.beginPath();
+    ctx.moveTo(BOX_SIZE, 0);
+    ctx.lineTo(BOX_SIZE + dx3d, dy3d);
+    ctx.lineTo(BOX_SIZE + dx3d, BOX_SIZE + dy3d);
+    ctx.lineTo(BOX_SIZE, BOX_SIZE);
+    ctx.closePath();
+    ctx.fill();
+    ctx.strokeStyle = outlineColor;
+    ctx.lineWidth = 1;
+    ctx.stroke();
 
-      // Warning Cross Symbol
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.95)';
+    // Top Face (Extruded 3D Top Surface)
+    ctx.beginPath();
+    ctx.moveTo(0, 0);
+    ctx.lineTo(dx3d, dy3d);
+    ctx.lineTo(BOX_SIZE + dx3d, dy3d);
+    ctx.lineTo(BOX_SIZE, 0);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+
+    // ── MAIN FRONT FACE ───────────────────────────────────────────
+    ctx.fillStyle = topColor;
+    ctx.fillRect(0, 0, BOX_SIZE, BOX_SIZE);
+
+    ctx.strokeStyle = outlineColor;
+    ctx.lineWidth = isSelected ? 3 : 1.5;
+    ctx.strokeRect(0, 0, BOX_SIZE, BOX_SIZE);
+
+    // Warning symbol for Very High Risk
+    if (box.isVeryHigh) {
+      ctx.strokeStyle = '#ffffff';
       ctx.lineWidth = 2;
       ctx.beginPath();
       ctx.moveTo(BOX_SIZE * 0.35, BOX_SIZE * 0.35);
@@ -492,39 +546,29 @@ function render() {
       ctx.moveTo(BOX_SIZE * 0.65, BOX_SIZE * 0.35);
       ctx.lineTo(BOX_SIZE * 0.35, BOX_SIZE * 0.65);
       ctx.stroke();
-    } else {
-      // Normal / Moderate Cyan Tile
-      ctx.shadowBlur = isSelected ? 12 : 0;
-      ctx.shadowColor = '#00f0ff';
-      ctx.fillStyle = isSelected ? 'rgba(0, 240, 255, 0.35)' : isHovered ? 'rgba(0, 210, 255, 0.25)' : 'rgba(14, 36, 66, 0.85)';
-      ctx.fillRect(0, 0, BOX_SIZE, BOX_SIZE);
-
-      ctx.strokeStyle = isSelected ? '#00f0ff' : 'rgba(0, 210, 255, 0.35)';
-      ctx.lineWidth = isSelected ? 2.5 : 1;
-      ctx.strokeRect(0, 0, BOX_SIZE, BOX_SIZE);
     }
 
-    // Selected Target Bracket Reticle
+    // 3D Selected Target Brackets
     if (isSelected) {
       ctx.strokeStyle = '#ffffff';
-      ctx.lineWidth = 2;
-      const b = 10;
+      ctx.lineWidth = 2.5;
+      const b = 12;
       ctx.beginPath();
-      ctx.moveTo(-4, b); ctx.lineTo(-4, -4); ctx.lineTo(b, -4);
-      ctx.moveTo(BOX_SIZE + 4 - b, -4); ctx.lineTo(BOX_SIZE + 4, -4); ctx.lineTo(BOX_SIZE + 4, b);
-      ctx.moveTo(-4, BOX_SIZE + 4 - b); ctx.lineTo(-4, BOX_SIZE + 4); ctx.lineTo(b, BOX_SIZE + 4);
-      ctx.moveTo(BOX_SIZE + 4 - b, BOX_SIZE + 4); ctx.lineTo(BOX_SIZE + 4, BOX_SIZE + 4); ctx.lineTo(BOX_SIZE + 4, BOX_SIZE + 4 - b);
+      ctx.moveTo(-6, b); ctx.lineTo(-6, -6); ctx.lineTo(b, -6);
+      ctx.moveTo(BOX_SIZE + 6 - b, -6); ctx.lineTo(BOX_SIZE + 6, -6); ctx.lineTo(BOX_SIZE + 6, b);
+      ctx.moveTo(-6, BOX_SIZE + 6 - b); ctx.lineTo(-6, BOX_SIZE + 6); ctx.lineTo(b, BOX_SIZE + 6);
+      ctx.moveTo(BOX_SIZE + 6 - b, BOX_SIZE + 6); ctx.lineTo(BOX_SIZE + 6, BOX_SIZE + 6); ctx.lineTo(BOX_SIZE + 6, BOX_SIZE + 6 - b);
       ctx.stroke();
     }
 
-    // Rank Badge Inside Box
+    // Rank Badge
     ctx.fillStyle = box.isVeryHigh ? '#ffffff' : '#e1f5fe';
-    ctx.font = '10px "JetBrains Mono", monospace';
-    ctx.fillText(`#${box.rank}`, 6, 16);
+    ctx.font = '11px "JetBrains Mono", monospace';
+    ctx.fillText(`#${box.rank}`, 6, 18);
 
-    // Short ID
+    // Short Account ID
     ctx.fillStyle = box.isVeryHigh ? '#ffcfcc' : 'rgba(100, 130, 173, 0.9)';
-    ctx.font = '8px "JetBrains Mono", monospace';
+    ctx.font = '9px "JetBrains Mono", monospace';
     ctx.fillText(box.CONS_NO.substring(0, 8), 6, BOX_SIZE - 8);
 
     ctx.restore();
@@ -533,7 +577,7 @@ function render() {
   ctx.restore();
 }
 
-/* ── Mouse Pan & Zoom Interactivity ─────────────────────────────── */
+/* ── Mouse Pan & Hover Detection ────────────────────────────────── */
 viewport.addEventListener('mousedown', (e) => {
   if (e.button !== 0) return;
   isDragging = true;
@@ -551,10 +595,11 @@ window.addEventListener('mousemove', (e) => {
   const mx = (e.clientX - rect.left - panX) / scale;
   const my = (e.clientY - rect.top - panY) / scale;
 
-  const found = gridData.find(b =>
-    mx >= b.x && mx <= b.x + BOX_SIZE &&
-    my >= b.y && my <= b.y + BOX_SIZE
-  );
+  const found = gridData.find(b => {
+    const curY = b.y - b.liftY;
+    return mx >= b.x && mx <= b.x + BOX_SIZE &&
+           my >= curY && my <= curY + BOX_SIZE;
+  });
 
   hoveredAccount = found || null;
 
@@ -572,7 +617,7 @@ window.addEventListener('mousemove', (e) => {
 
 window.addEventListener('mouseup', () => { isDragging = false; });
 
-/* ── Click Handler: Animated Camera Pan & Zoom ──────────────────── */
+/* ── Click Handler: 3D Elevate & Budge Lift + Camera Zoom ────────── */
 viewport.addEventListener('click', (e) => {
   if (hoveredAccount) {
     selectAccount(hoveredAccount, true);
@@ -593,9 +638,20 @@ viewport.addEventListener('wheel', (e) => {
   targetScale = nextScale;
 }, { passive: false });
 
-/* ── Select & Animate Camera Focus ──────────────────────────────── */
+/* ── Select & Trigger 3D Budge Up & Zoom ────────────────────────── */
 function selectAccount(acc, animateZoom = true) {
   selectedAccount = acc;
+
+  // Reset 3D Lift for all other boxes, and elevate the selected one!
+  gridData.forEach(box => {
+    if (box.CONS_NO === acc.CONS_NO) {
+      box.targetLiftY = 28;             // Budge / Elevate Upwards 28px in 3D
+      box.targetExtrusion = box.baseExtrusion + 20; // 3D extruded pop height
+    } else {
+      box.targetLiftY = 0;
+      box.targetExtrusion = box.baseExtrusion;
+    }
+  });
 
   document.getElementById('sel-id').textContent = acc.CONS_NO;
   document.getElementById('sel-risk').textContent = (acc.risk_score || 0).toFixed(4);
@@ -606,16 +662,16 @@ function selectAccount(acc, animateZoom = true) {
   const banner = document.getElementById('sel-banner');
   if (acc.risk_score >= 0.75) {
     banner.className = 'risk-banner very-high';
-    banner.textContent = 'VERY HIGH RISK // BEHAVIOURAL ANOMALY';
+    banner.textContent = '3D ELEVATED // VERY HIGH RISK ANOMALY';
   } else if (acc.risk_score >= 0.50) {
     banner.className = 'risk-banner high';
-    banner.textContent = 'HIGH RISK ANOMALY';
+    banner.textContent = '3D ELEVATED // HIGH RISK ANOMALY';
   } else {
     banner.className = 'risk-banner normal';
-    banner.textContent = 'NORMAL OPERATING BASELINE';
+    banner.textContent = '3D ELEVATED // NORMAL OPERATING BASELINE';
   }
 
-  // Update Diagnostic Checklist
+  // Update Diagnostics
   document.getElementById('chk-cusum').className = (acc.cusum_score > 1000) ? 'check-tag alert' : 'check-tag clear';
   document.getElementById('chk-cusum').textContent = (acc.cusum_score > 1000) ? 'ALERT' : 'CLEAR';
 
@@ -627,14 +683,14 @@ function selectAccount(acc, animateZoom = true) {
 
   drawTelemetryChart(acc);
 
-  // Smooth Camera Pan & Zoom Animation
+  // Smooth Camera Focus Zoom into the 3D elevated tile
   if (animateZoom) {
-    targetScale = 1.8;
+    targetScale = 1.6;
     const viewportWidth = viewport.clientWidth;
     const viewportHeight = viewport.clientHeight;
 
     const boxCenterX = acc.x + (BOX_SIZE / 2);
-    const boxCenterY = acc.y + (BOX_SIZE / 2);
+    const boxCenterY = (acc.y - 28) + (BOX_SIZE / 2);
 
     targetPanX = (viewportWidth / 2) - (boxCenterX * targetScale);
     targetPanY = (viewportHeight / 2) - (boxCenterY * targetScale);
@@ -666,7 +722,7 @@ function drawTelemetryChart(acc) {
   cctx.stroke();
   cctx.setLineDash([]);
 
-  // Observed Usage Curve
+  // Observed Usage Line
   cctx.strokeStyle = acc.risk_score >= 0.75 ? '#ef4444' : '#00f0ff';
   cctx.lineWidth = 2;
   cctx.beginPath();
@@ -689,9 +745,9 @@ function setFilter(filter) {
 }
 
 function resetTransform() {
-  targetScale = 0.85;
-  targetPanX = 60;
-  targetPanY = 60;
+  targetScale = 0.8;
+  targetPanX = 80;
+  targetPanY = 80;
 }
 
 // Search Handler
