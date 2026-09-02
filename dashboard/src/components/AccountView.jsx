@@ -206,15 +206,18 @@ const AccountView = ({ account, onBack }) => {
             <div style={{ fontFamily: 'Orbitron', fontSize: '14px', fontWeight: '700' }}>investigation_features.csv</div>
           </div>
 
-          <div className={isHighRisk ? "rec-card" : "rec-card normal"} style={{ margin: 0 }}>
-            <div className="rec-hdr">
-              <ShieldAlert size={16} /> Recommended action
+          {/* Recommended Action */}
+          <div style={{ marginTop: '20px', background: isDrop ? 'rgba(239, 68, 68, 0.05)' : 'rgba(255, 153, 0, 0.05)', border: `1px solid ${isDrop ? 'rgba(239, 68, 68, 0.2)' : 'rgba(255, 153, 0, 0.2)'}`, borderRadius: '8px', padding: '20px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+              <ShieldAlert size={16} color="var(--text-muted)" />
+              <h4 style={{ color: '#fff', fontSize: '14px', fontWeight: 'bold' }}>Recommended action</h4>
             </div>
-            <div>
-              {isHighRisk 
-                ? "Sustained consumption drop below expected baseline. Recommend technician dispatch for physical meter audit."
-                : "Monitor the account for another cycle and re-evaluate drift severity."}
-            </div>
+            <p style={{ color: 'var(--text-muted)', fontSize: '13px', lineHeight: '1.5' }}>
+              {isDrop 
+                ? 'Sustained consumption drop below expected baseline. Recommend technician dispatch for physical meter audit.'
+                : 'Sustained abnormal usage spike above expected baseline. Extreme deviation warrants an internal desk review.'
+              }
+            </p>
           </div>
 
         </div>
