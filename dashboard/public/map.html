@@ -3,43 +3,55 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AI 02 — Smart Grid Energy Intelligence</title>
+  <title>AI 02 — Bitcoin DeFi Grid Intelligence</title>
 
-  <!-- Google Fonts: Inter / Outfit / JetBrains Mono -->
+  <!-- Google Fonts: Inter / JetBrains Mono / Orbitron -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700;800&family=Orbitron:wght@600;800;900&display=swap" rel="stylesheet" />
 
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
+    /* Bitcoin DeFi Aesthetic Tokens (True Void + Luminescent Gold & Orange Glow) */
     :root {
-      --bg: #070b14;
-      --panel-bg: rgba(13, 20, 36, 0.95);
-      --card-bg: rgba(20, 30, 52, 0.7);
-      --border-blue: #1d3254;
-      --border-cyan: #00d2ff;
+      --bg-void: #030304;
+      --panel-bg: rgba(10, 10, 14, 0.92);
+      --card-bg: rgba(16, 16, 22, 0.75);
+      --border: rgba(255, 153, 0, 0.2);
+      --border-cyan: rgba(0, 240, 255, 0.3);
+      --btc-orange: #ff9900;
+      --btc-glow: rgba(255, 153, 0, 0.45);
+      --gold: #f7931a;
       --cyan: #00f0ff;
       --red: #ef4444;
-      --red-glow: rgba(239, 68, 68, 0.4);
-      --amber: #f59e0b;
+      --red-glow: rgba(239, 68, 68, 0.5);
       --green: #10b981;
-      --text: #f3f4f6;
-      --muted: #9ca3af;
-      --dim: #4b5563;
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --dim: #334155;
     }
 
     html, body {
       height: 100%; width: 100%; overflow: hidden;
       font-family: 'Inter', system-ui, sans-serif;
-      background: var(--bg); color: var(--text);
+      background: var(--bg-void); color: var(--text);
       user-select: none;
+    }
+
+    /* Textured Grid Void Background Overlay */
+    body::before {
+      content: " ";
+      display: block; position: absolute; top: 0; left: 0; bottom: 0; right: 0;
+      background: linear-gradient(rgba(3, 3, 4, 0) 50%, rgba(0, 0, 0, 0.3) 50%);
+      background-size: 100% 4px;
+      z-index: 999; pointer-events: none; opacity: 0.25;
     }
 
     /* ── LAYOUT CONTAINER ────────────────────────────────────────── */
     #app {
       display: grid;
-      grid-template-rows: 56px 1fr 30px;
+      grid-template-rows: 54px 1fr 30px;
       grid-template-columns: 1fr 420px;
       height: 100vh; width: 100vw;
     }
@@ -47,37 +59,38 @@
     /* ── HEADER ──────────────────────────────────────────────────── */
     header {
       grid-column: 1 / -1;
-      background: #09101f;
-      border-bottom: 1px solid var(--border-blue);
+      background: rgba(5, 5, 8, 0.95);
+      border-bottom: 1px solid var(--border);
       display: flex; align-items: center; justify-content: space-between;
-      padding: 0 20px; font-family: 'Outfit', sans-serif;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      padding: 0 20px; font-family: 'Orbitron', sans-serif;
+      box-shadow: 0 4px 20px rgba(255, 153, 0, 0.1);
       z-index: 100;
     }
 
     .brand {
       display: flex; align-items: center; gap: 12px;
-      font-size: 16px; font-weight: 800; letter-spacing: -0.01em; color: #ffffff;
+      font-size: 15px; font-weight: 800; letter-spacing: 0.04em; color: var(--gold);
+      text-shadow: 0 0 12px var(--btc-glow);
     }
-    .brand svg { color: var(--cyan); }
     .brand-tag {
-      font-size: 11px; padding: 3px 10px; border: 1px solid rgba(0, 240, 255, 0.3);
-      background: rgba(0, 240, 255, 0.1); color: var(--cyan); border-radius: 20px; font-family: 'Inter', sans-serif; font-weight: 600;
+      font-size: 10px; padding: 3px 10px; border: 1px solid var(--border);
+      background: rgba(255, 153, 0, 0.1); color: var(--btc-orange); border-radius: 4px; font-family: 'Inter', sans-serif; font-weight: 600;
     }
 
     .hdr-metrics {
-      display: flex; align-items: center; gap: 28px; font-size: 13px;
+      display: flex; align-items: center; gap: 24px; font-size: 12px;
+      font-family: 'JetBrains Mono', monospace;
     }
     .hdr-stat { display: flex; align-items: center; gap: 8px; }
-    .hdr-stat .lbl { color: var(--muted); font-size: 11px; font-weight: 500; }
-    .hdr-stat .val { color: var(--text); font-weight: 700; font-family: 'JetBrains Mono', monospace; }
-    .hdr-stat .val.red { color: var(--red); text-shadow: 0 0 10px var(--red-glow); }
-    .hdr-stat .val.cyan { color: var(--cyan); }
+    .hdr-stat .lbl { color: var(--muted); font-size: 10px; }
+    .hdr-stat .val { color: var(--text); font-weight: 700; }
+    .hdr-stat .val.red { color: var(--red); text-shadow: 0 0 8px var(--red-glow); }
+    .hdr-stat .val.gold { color: var(--gold); text-shadow: 0 0 8px var(--btc-glow); }
 
     /* ── MAIN CANVAS AREA ────────────────────────────────────────── */
     #viewport {
       position: relative;
-      background: radial-gradient(circle at center, #0e1a33 0%, #040812 100%);
+      background: radial-gradient(circle at center, #0a0a10 0%, #030304 100%);
       overflow: hidden;
       cursor: grab;
     }
@@ -85,35 +98,38 @@
 
     canvas { display: block; width: 100%; height: 100%; }
 
-    /* Viewport Overlay Controls */
-    .viewport-hud {
-      position: absolute; top: 16px; left: 16px; pointer-events: none;
-      display: flex; flex-direction: column; gap: 8px; z-index: 10;
+    /* Viewport Top Bar (CLEAN FLEX BAR - NO OVERLAP) */
+    .viewport-bar {
+      position: absolute; top: 14px; left: 14px; right: 14px; z-index: 10;
+      display: flex; align-items: center; justify-content: space-between; gap: 16px;
+      pointer-events: none;
     }
+    .viewport-bar > * { pointer-events: auto; }
+
     .hud-title {
-      font-family: 'Outfit', sans-serif; font-size: 12px; color: #ffffff; font-weight: 700;
-      letter-spacing: 0.02em; background: rgba(9, 16, 31, 0.9);
-      border: 1px solid var(--border-blue); padding: 8px 14px; border-radius: 8px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4); width: fit-content;
+      font-family: 'Orbitron', sans-serif; font-size: 11px; color: var(--gold); font-weight: 700;
+      letter-spacing: 0.05em; text-transform: uppercase; background: rgba(5, 5, 8, 0.9);
+      border: 1px solid var(--border); padding: 8px 14px; border-radius: 6px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5); text-shadow: 0 0 8px var(--btc-glow);
     }
 
     .viewport-tools {
-      position: absolute; top: 16px; right: 16px; z-index: 10;
       display: flex; align-items: center; gap: 8px;
     }
     .tool-btn {
-      background: rgba(9, 16, 31, 0.9); border: 1px solid var(--border-blue);
-      color: var(--text); padding: 8px 14px; font-size: 12px; font-weight: 600;
-      border-radius: 8px; cursor: pointer; transition: all 0.15s; display: flex; align-items: center; gap: 6px;
+      background: rgba(5, 5, 8, 0.9); border: 1px solid var(--border);
+      color: var(--text); padding: 8px 14px; font-size: 11px; font-family: 'JetBrains Mono', monospace;
+      border-radius: 6px; cursor: pointer; transition: all 0.15s; display: flex; align-items: center; gap: 6px;
     }
     .tool-btn:hover, .tool-btn.active {
-      border-color: var(--cyan); color: var(--cyan); background: rgba(0, 240, 255, 0.15);
+      border-color: var(--gold); color: var(--gold); background: rgba(255, 153, 0, 0.15);
+      box-shadow: 0 0 12px var(--btc-glow);
     }
 
     .viewport-search {
-      position: absolute; bottom: 16px; left: 16px; z-index: 10;
-      display: flex; align-items: center; gap: 8px; background: rgba(9, 16, 31, 0.9);
-      border: 1px solid var(--border-blue); padding: 6px 12px; border-radius: 8px;
+      position: absolute; bottom: 14px; left: 14px; z-index: 10;
+      display: flex; align-items: center; gap: 8px; background: rgba(5, 5, 8, 0.9);
+      border: 1px solid var(--border); padding: 6px 12px; border-radius: 6px;
     }
     .viewport-search input {
       background: transparent; border: none; outline: none; color: var(--text);
@@ -121,24 +137,25 @@
     }
     .viewport-search input::placeholder { color: var(--muted); }
 
-    /* ── CONSUMER FRIENDLY SIDEBAR ───────────────────────────────── */
+    /* ── SIDEBAR (Bitcoin DeFi Glassmorphism) ───────────────────── */
     #sidebar {
-      background: #09101f;
-      border-left: 1px solid var(--border-blue);
+      background: rgba(5, 5, 8, 0.95);
+      border-left: 1px solid var(--border);
       display: flex; flex-direction: column;
       overflow-y: auto; padding: 18px; gap: 16px;
     }
 
     .panel-box {
       background: var(--card-bg);
-      border: 1px solid var(--border-blue);
-      border-radius: 12px; padding: 16px;
+      border: 1px solid var(--border);
+      border-radius: 8px; padding: 16px; position: relative;
     }
 
     .panel-hdr {
-      font-family: 'Outfit', sans-serif; font-size: 13px; font-weight: 700;
-      color: #ffffff; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.08); padding-bottom: 8px;
+      font-family: 'Orbitron', sans-serif; font-size: 11px; font-weight: 700;
+      letter-spacing: 0.08em; color: var(--gold); text-transform: uppercase;
+      margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px solid rgba(255, 153, 0, 0.15); padding-bottom: 8px;
     }
 
     .telemetry-id {
@@ -147,54 +164,53 @@
     }
     .risk-banner {
       display: flex; align-items: center; justify-content: space-between;
-      padding: 10px 14px; border-radius: 8px; font-weight: 700; font-size: 12px;
-      margin-bottom: 16px; font-family: 'Outfit', sans-serif;
+      padding: 10px 14px; border-radius: 6px; font-weight: 700; font-size: 11px;
+      margin-bottom: 16px; font-family: 'Orbitron', sans-serif;
     }
-    .risk-banner.very-high { background: rgba(239, 68, 68, 0.18); border: 1px solid var(--red); color: var(--red); }
-    .risk-banner.high { background: rgba(245, 158, 11, 0.18); border: 1px solid var(--amber); color: var(--amber); }
-    .risk-banner.normal { background: rgba(16, 185, 129, 0.15); border: 1px solid var(--green); color: var(--green); }
+    .risk-banner.very-high { background: rgba(239, 68, 68, 0.18); border: 1px solid var(--red); color: var(--red); box-shadow: 0 0 15px var(--red-glow); }
+    .risk-banner.normal { background: rgba(255, 153, 0, 0.15); border: 1px solid var(--gold); color: var(--gold); box-shadow: 0 0 12px var(--btc-glow); }
 
     /* Consumer Metrics Grid */
     .consumer-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
-    .c-tile { background: rgba(9, 16, 31, 0.8); border: 1px solid var(--border-blue); padding: 10px 12px; border-radius: 8px; }
-    .c-tile .lbl { font-size: 11px; color: var(--muted); font-weight: 500; }
-    .c-tile .val { font-size: 15px; font-weight: 700; color: #ffffff; margin-top: 4px; font-family: 'Outfit', sans-serif; }
+    .c-tile { background: rgba(5, 5, 8, 0.85); border: 1px solid var(--border); padding: 10px 12px; border-radius: 6px; }
+    .c-tile .lbl { font-size: 10px; color: var(--muted); font-weight: 600; font-family: 'JetBrains Mono', monospace; }
+    .c-tile .val { font-size: 15px; font-weight: 800; color: #ffffff; margin-top: 4px; font-family: 'Orbitron', sans-serif; }
     .c-tile .sub { font-size: 10px; color: var(--muted); margin-top: 2px; }
 
-    /* Actionable Recommendation Card */
+    /* Action Recommendation Card */
     .rec-card {
       background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.3);
-      padding: 12px; border-radius: 8px; margin-top: 10px; font-size: 12px; line-height: 1.5;
+      padding: 12px; border-radius: 6px; margin-top: 10px; font-size: 12px; line-height: 1.5;
     }
     .rec-card.normal {
-      background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.3);
+      background: rgba(255, 153, 0, 0.08); border: 1px solid var(--border);
     }
     .rec-hdr { font-weight: 700; margin-bottom: 4px; display: flex; align-items: center; gap: 6px; }
 
-    /* Telemetry Mini Chart */
-    .mini-chart { height: 90px; width: 100%; margin-top: 8px; background: rgba(4, 8, 16, 0.9); border: 1px solid var(--border-blue); border-radius: 8px; position: relative; }
-    canvas.chart-canvas { width: 100%; height: 100%; border-radius: 8px; }
+    /* Mini Waveform Chart */
+    .mini-chart { height: 90px; width: 100%; margin-top: 8px; background: rgba(3, 3, 4, 0.95); border: 1px solid var(--border); border-radius: 6px; position: relative; }
+    canvas.chart-canvas { width: 100%; height: 100%; border-radius: 6px; }
 
     /* ── FOOTER STATUS BAR ───────────────────────────────────────── */
     footer {
-      grid-column: 1 / -1; background: #050912; border-top: 1px solid var(--border-blue);
+      grid-column: 1 / -1; background: #030304; border-top: 1px solid var(--border);
       display: flex; align-items: center; justify-content: space-between;
-      padding: 0 20px; font-size: 11px; color: var(--muted); font-weight: 500;
+      padding: 0 20px; font-size: 11px; font-family: 'JetBrains Mono', monospace; color: var(--muted);
     }
     .status-indicator { display: flex; align-items: center; gap: 8px; }
-    .pulse-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); box-shadow: 0 0 10px var(--green); animation: pulse 1.5s infinite; }
+    .pulse-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--gold); box-shadow: 0 0 10px var(--gold); animation: pulse 1.5s infinite; }
     @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
 
     /* Tooltip */
     #grid-tooltip {
       position: fixed; pointer-events: none; z-index: 1000;
-      background: rgba(9, 16, 31, 0.95); border: 1px solid var(--cyan);
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-      padding: 10px 14px; border-radius: 8px; font-family: 'Inter', sans-serif;
+      background: rgba(5, 5, 8, 0.95); border: 1px solid var(--gold);
+      box-shadow: 0 0 20px var(--btc-glow);
+      padding: 10px 14px; border-radius: 6px; font-family: 'JetBrains Mono', monospace;
       display: none; transform: translate(14px, 14px);
     }
     #grid-tooltip .tt-id { font-weight: 700; font-size: 12px; color: #fff; }
-    #grid-tooltip .tt-val { font-size: 11px; color: var(--cyan); margin-top: 2px; }
+    #grid-tooltip .tt-val { font-size: 11px; color: var(--gold); margin-top: 2px; }
   </style>
 </head>
 <body>
@@ -204,28 +220,28 @@
     <header>
       <div class="brand">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-        SMART GRID ENERGY INTELLIGENCE
-        <span class="brand-tag">CONSUMER INTELLIGENCE DASHBOARD</span>
+        AI 02 — BITCOIN DEFI GRID INTELLIGENCE
+        <span class="brand-tag">BOUNDED 3D MATRIX</span>
       </div>
 
       <div class="hdr-metrics">
-        <div class="hdr-stat"><span class="lbl">TOTAL HOUSEHOLDS:</span> <span class="val cyan" id="h-total">0</span></div>
-        <div class="hdr-stat"><span class="lbl">SUSPICIOUS ANOMALIES:</span> <span class="val red" id="h-critical">0</span></div>
-        <div class="hdr-stat"><span class="lbl">PRECISION@50:</span> <span class="val cyan">72.0%</span></div>
-        <div class="hdr-stat"><span class="lbl">AUC-PR:</span> <span class="val cyan">0.2272</span></div>
+        <div class="hdr-stat"><span class="lbl">TOTAL HOUSEHOLDS:</span> <span class="val gold" id="h-total">0</span></div>
+        <div class="hdr-stat"><span class="lbl">SUSPICIOUS ALERTS:</span> <span class="val red" id="h-critical">0</span></div>
+        <div class="hdr-stat"><span class="lbl">PRECISION@50:</span> <span class="val gold">72.0%</span></div>
+        <div class="hdr-stat"><span class="lbl">AUC-PR:</span> <span class="val gold">0.2272</span></div>
       </div>
     </header>
 
     <!-- MAIN GRID CANVAS VIEWPORT -->
     <div id="viewport">
-      <div class="viewport-hud">
-        <div class="hud-title">SPACIOUS HOUSEHOLD MATRIX // CLICK BOX TO ELEVATE 3D & ZOOM</div>
-      </div>
-
-      <div class="viewport-tools">
-        <button class="tool-btn active" id="btn-all" onclick="setFilter('all')">ALL HOUSEHOLDS</button>
-        <button class="tool-btn" id="btn-critical" onclick="setFilter('critical')">SUSPICIOUS ALERTS ONLY</button>
-        <button class="tool-btn" onclick="resetTransform()">RESET VIEW</button>
+      <!-- TOP BAR FLEX CONTAINER (NO TEXT OVERLAP) -->
+      <div class="viewport-bar">
+        <div class="hud-title">SPACIOUS 3D GRID // RESTRICTED BOUNDED ZOOM</div>
+        <div class="viewport-tools">
+          <button class="tool-btn active" id="btn-all" onclick="setFilter('all')">ALL HOUSEHOLDS</button>
+          <button class="tool-btn" id="btn-critical" onclick="setFilter('critical')">RED SUSPICIOUS ONLY</button>
+          <button class="tool-btn" onclick="resetTransform()">RESET VIEW</button>
+        </div>
       </div>
 
       <div class="viewport-search">
@@ -240,15 +256,14 @@
       <!-- PANEL 1: HOUSEHOLD ENERGY PROFILE -->
       <div class="panel-box">
         <div class="panel-hdr">
-          <span>HOUSEHOLD ENERGY PROFILE</span>
-          <span style="font-size:10px; color:var(--muted)" id="sec-type">RESIDENTIAL METER</span>
+          <span>HOUSEHOLD PROFILE</span>
+          <span style="font-size:10px; color:var(--muted)" id="sec-type">MODEL O2 DATASET</span>
         </div>
 
         <div id="selected-content">
           <div class="telemetry-id" id="sel-id">SELECT A HOUSEHOLD BOX</div>
           <div class="risk-banner normal" id="sel-banner">CLICK ANY BOX TO ZOOM</div>
 
-          <!-- Product & Consumer friendly tiles -->
           <div class="consumer-grid">
             <div class="c-tile">
               <div class="lbl">EXPECTED TOMORROW</div>
@@ -282,25 +297,23 @@
         </div>
       </div>
 
-      <!-- PANEL 2: CONSUMER / INVESTIGATOR RECOMMENDATION -->
+      <!-- PANEL 2: ACTION RECOMMENDATION CARD -->
       <div class="panel-box">
-        <div class="panel-hdr">ACTIONABLE RECOMMENDATION</div>
+        <div class="panel-hdr">ACTION RECOMMENDATION</div>
         <div class="rec-card" id="rec-card">
-          <div class="rec-hdr" id="rec-hdr">⚠️ ACTION REQUIRED: Meter Inspection Recommended</div>
+          <div class="rec-hdr" id="rec-hdr">⚠️ ACTION REQUIRED: Meter Audit Recommended</div>
           <div id="rec-desc">
-            This account displays a sustained <strong>69% drop</strong> in daily usage below baseline for over 30 days. Recommend sending a field technician to inspect meter tampering.
+            Sustained consumption drop below expected baseline. Recommend technician dispatch for physical meter check.
           </div>
         </div>
       </div>
 
-      <!-- PANEL 3: EASY EXPLANATION -->
+      <!-- PANEL 3: DEFI PHILOSOPHY -->
       <div class="panel-box">
-        <div class="panel-hdr">CONSUMER INTELLIGENCE</div>
+        <div class="panel-hdr">BITCOIN DEFI DESIGN</div>
         <div style="font-size:12px; color:var(--muted); line-height: 1.6">
-          <strong style="color:var(--text)">How Expected Usage Works:</strong><br/>
-          Our AI model analyzes historical household consumption patterns to forecast expected daily usage. 
-          <br/><br/>
-          <span style="color:var(--red); font-weight:700">RED TILES</span>: Households using significantly less electricity than expected over extended periods.
+          <strong style="color:var(--gold)">Luminescent Gold & Void Foundation:</strong><br/>
+          Built with 1px precision borders, glassmorphism depth, and mathematically restricted viewport bounds.
         </div>
       </div>
     </div>
@@ -309,9 +322,9 @@
     <footer>
       <div class="status-indicator">
         <div class="pulse-dot"></div>
-        SYSTEM OPERATIONAL // CONSUMER INTELLIGENCE ENGINE ACTIVE
+        SYSTEM OPERATIONAL // BITCOIN DEFI DESIGN SYSTEM
       </div>
-      <div>DRAG TO PAN // SCROLL TO ZOOM // CLICK BOX TO ELEVATE IN 3D</div>
+      <div>RESTRICTED ZOOM & BOUNDED PAN ACTIVE</div>
     </footer>
   </div>
 
@@ -323,7 +336,7 @@
 
 <script>
 /* ================================================================
-   CONSUMER FRIENDLY SPACIOUS 3D GRID CONTROLLER
+   RESTRICTED BOUNDED ZOOM & PAN GRID MATRIX CONTROLLER
    ================================================================ */
 const API_BASE = 'http://localhost:8000';
 
@@ -344,22 +357,22 @@ let startX = 0, startY = 0;
 let selectedAccount = null;
 let hoveredAccount = null;
 
-// EVEN MORE SPREAD OUT GRID SETTINGS (Huge Spacing)
-const BOX_SIZE = 80; // Larger household box size
-const BOX_GAP = 56;  // Huge 56px spacing gap between boxes for maximum breathing room
-const COLS = 14;     // 14 tiles per row for wide spacious distribution
+// Grid Matrix Layout Dimensions
+const BOX_SIZE = 80; // Size of each household block
+const BOX_GAP = 56;  // Wide spacing gap between blocks
+const COLS = 14;     // 14 tiles per row
 
 const canvas = document.getElementById('gridCanvas');
 const ctx = canvas.getContext('2d');
 const viewport = document.getElementById('viewport');
 
-/* ── Fetch Ranked Data ──────────────────────────────────────────── */
+/* ── Fetch Model o2 Ranked Accounts ────────────────────────────── */
 async function loadData() {
   try {
     const res = await fetch(`${API_BASE}/api/accounts?limit=400`);
     accounts = await res.json();
   } catch (err) {
-    console.warn("API offline, fallback dummy data generated", err);
+    console.warn("API offline, fallback dataset generated", err);
     accounts = Array.from({ length: 140 }, (_, i) => ({
       CONS_NO: `ACC_${(10000 + i).toString(16).toUpperCase()}`,
       risk_score: i < 25 ? 0.95 - (i * 0.005) : (i < 50 ? 0.6 - (i * 0.003) : 0.2 - (i * 0.0005)),
@@ -373,7 +386,6 @@ async function loadData() {
 
   accounts.sort((a, b) => b.risk_score - a.risk_score);
 
-  // Build Spacious Grid Matrix
   gridData = accounts.map((acc, i) => {
     const col = i % COLS;
     const row = Math.floor(i / COLS);
@@ -382,7 +394,6 @@ async function loadData() {
     
     const isVeryHigh = acc.risk_score >= 0.75;
     const isHigh = acc.risk_score >= 0.50;
-
     const baseExtrusion = isVeryHigh ? 26 : isHigh ? 16 : 8;
 
     return {
@@ -410,15 +421,44 @@ async function loadData() {
 function resizeCanvas() {
   canvas.width = viewport.clientWidth;
   canvas.height = viewport.clientHeight;
+  clampBounds();
 }
 window.addEventListener('resize', resizeCanvas);
 resizeCanvas();
 
+/* ── Strict Zoom & Pan Bounding Logic (RESTRICT ZOOM OUT WITHIN GRID) ── */
+function clampBounds() {
+  const gridW = COLS * (BOX_SIZE + BOX_GAP);
+  const rows = Math.ceil(gridData.length / COLS) || 10;
+  const gridH = rows * (BOX_SIZE + BOX_GAP);
+
+  const vw = canvas.width;
+  const vh = canvas.height;
+
+  // Calculate minimum scale so zooming out NEVER shrinks the grid smaller than viewport
+  const minScaleX = (vw * 0.7) / gridW;
+  const minScaleY = (vh * 0.7) / gridH;
+  const minScale = Math.max(minScaleX, minScaleY, 0.45); // Strict min zoom constraint
+
+  targetScale = Math.min(Math.max(targetScale, minScale), 2.5);
+
+  // Clamp Pan Bounds so grid cannot be dragged completely off-screen
+  const maxPanX = vw * 0.5;
+  const minPanX = vw * 0.5 - (gridW * targetScale);
+  const maxPanY = vh * 0.5;
+  const minPanY = vh * 0.5 - (gridH * targetScale);
+
+  targetPanX = Math.min(Math.max(targetPanX, minPanX), maxPanX);
+  targetPanY = Math.min(Math.max(targetPanY, minPanY), maxPanY);
+}
+
 function animate() {
-  // Smooth Camera Pan & Zoom Interpolation
-  scale += (targetScale - scale) * 0.12;
-  panX += (targetPanX - panX) * 0.12;
-  panY += (targetPanY - panY) * 0.12;
+  clampBounds();
+
+  // Lerp camera transform
+  scale += (targetScale - scale) * 0.14;
+  panX += (targetPanX - panX) * 0.14;
+  panY += (targetPanY - panY) * 0.14;
 
   // Lerp 3D Budge & Extrusion
   gridData.forEach(box => {
@@ -430,7 +470,7 @@ function animate() {
   requestAnimationFrame(animate);
 }
 
-/* ── Render Spacious 3D Isometric Grid Blocks ──────────────────── */
+/* ── Render Luminescent Bitcoin Gold & Void 3D Grid ─────────────── */
 function render() {
   const w = canvas.width;
   const h = canvas.height;
@@ -443,7 +483,7 @@ function render() {
 
   // 1. Background Grid Lines
   const bgGridSize = (BOX_SIZE + BOX_GAP);
-  ctx.strokeStyle = 'rgba(20, 42, 75, 0.4)';
+  ctx.strokeStyle = 'rgba(255, 153, 0, 0.12)';
   ctx.lineWidth = 1 / scale;
 
   const startCol = Math.floor(-panX / (bgGridSize * scale)) - 2;
@@ -462,7 +502,7 @@ function render() {
   }
   ctx.stroke();
 
-  // 2. Render 3D Extruded Household Blocks
+  // 2. Render 3D Extruded Blocks
   const time = Date.now() * 0.003;
 
   gridData.forEach(box => {
@@ -481,21 +521,21 @@ function render() {
     const dx3d = h3d * 0.45;
     const dy3d = -h3d * 0.55;
 
-    // Colors
+    // Luminescent Colors (Bitcoin Orange & Gold Glow)
     let topColor, sideColor, outlineColor;
     if (box.isVeryHigh) {
       const pulse = Math.sin(time + box.row) * 0.35 + 0.65;
-      topColor = `rgba(239, 68, 68, ${0.4 + pulse * 0.25})`;
-      sideColor = `rgba(180, 40, 40, ${0.7 + pulse * 0.2})`;
+      topColor = `rgba(239, 68, 68, ${0.45 + pulse * 0.25})`;
+      sideColor = `rgba(180, 40, 40, ${0.75 + pulse * 0.2})`;
       outlineColor = '#ef4444';
       ctx.shadowColor = '#ef4444';
       ctx.shadowBlur = (isSelected ? 24 : 12) * pulse;
     } else {
-      topColor = isSelected ? 'rgba(0, 240, 255, 0.45)' : isHovered ? 'rgba(0, 210, 255, 0.3)' : 'rgba(14, 36, 66, 0.85)';
-      sideColor = isSelected ? 'rgba(0, 160, 210, 0.6)' : 'rgba(8, 22, 44, 0.9)';
-      outlineColor = isSelected ? '#00f0ff' : 'rgba(0, 210, 255, 0.4)';
-      ctx.shadowColor = '#00f0ff';
-      ctx.shadowBlur = isSelected ? 16 : 0;
+      topColor = isSelected ? 'rgba(255, 153, 0, 0.45)' : isHovered ? 'rgba(247, 147, 26, 0.3)' : 'rgba(16, 16, 24, 0.9)';
+      sideColor = isSelected ? 'rgba(200, 120, 0, 0.6)' : 'rgba(10, 10, 16, 0.95)';
+      outlineColor = isSelected ? '#ff9900' : 'rgba(255, 153, 0, 0.35)';
+      ctx.shadowColor = '#ff9900';
+      ctx.shadowBlur = isSelected ? 18 : 0;
     }
 
     // Right Face
@@ -555,12 +595,12 @@ function render() {
     }
 
     // Rank Badge
-    ctx.fillStyle = box.isVeryHigh ? '#ffffff' : '#e1f5fe';
+    ctx.fillStyle = box.isVeryHigh ? '#ffffff' : '#f8fafc';
     ctx.font = '11px "JetBrains Mono", monospace';
     ctx.fillText(`#${box.rank}`, 8, 18);
 
     // Short Account ID
-    ctx.fillStyle = box.isVeryHigh ? '#ffcfcc' : 'rgba(100, 130, 173, 0.9)';
+    ctx.fillStyle = box.isVeryHigh ? '#ffcfcc' : 'rgba(148, 163, 184, 0.9)';
     ctx.font = '9px "JetBrains Mono", monospace';
     ctx.fillText(box.CONS_NO.substring(0, 8), 8, BOX_SIZE - 8);
 
@@ -610,7 +650,6 @@ window.addEventListener('mousemove', (e) => {
 
 window.addEventListener('mouseup', () => { isDragging = false; });
 
-/* ── Click Handler: 3D Budge Elevate & Zoom into Box ────────────── */
 viewport.addEventListener('click', (e) => {
   if (hoveredAccount) {
     selectAccount(hoveredAccount, true);
@@ -620,25 +659,28 @@ viewport.addEventListener('click', (e) => {
 viewport.addEventListener('wheel', (e) => {
   e.preventDefault();
   const zoomFactor = e.deltaY < 0 ? 1.15 : 0.85;
-  const nextScale = Math.min(Math.max(targetScale * zoomFactor, 0.3), 3.5);
 
   const rect = canvas.getBoundingClientRect();
   const mouseX = e.clientX - rect.left;
   const mouseY = e.clientY - rect.top;
 
+  const nextScale = targetScale * zoomFactor;
+
   targetPanX = mouseX - (mouseX - targetPanX) * (nextScale / targetScale);
   targetPanY = mouseY - (mouseY - targetPanY) * (nextScale / targetScale);
   targetScale = nextScale;
+
+  clampBounds();
 }, { passive: false });
 
-/* ── Select & Populate Consumer Friendly Insights ───────────────── */
+/* ── Select Account & Populate Insights ─────────────────────────── */
 function selectAccount(acc, animateZoom = true) {
   selectedAccount = acc;
 
   gridData.forEach(box => {
     if (box.CONS_NO === acc.CONS_NO) {
-      box.targetLiftY = 32;                         // Budge Elevate 32px
-      box.targetExtrusion = box.baseExtrusion + 22; // 3D extrude pop
+      box.targetLiftY = 32;
+      box.targetExtrusion = box.baseExtrusion + 22;
     } else {
       box.targetLiftY = 0;
       box.targetExtrusion = box.baseExtrusion;
@@ -651,7 +693,6 @@ function selectAccount(acc, animateZoom = true) {
   document.getElementById('c-rank').textContent = `#${acc.rank || '—'}`;
   document.getElementById('c-risk-pct').textContent = `Risk Score ${(acc.risk_score || 0).toFixed(2)}`;
 
-  // Product & Consumer friendly data calculations
   const expectedTmrw = (12.5 + (acc.rank % 5) * 2.1).toFixed(1);
   const observedToday = acc.isVeryHigh ? (expectedTmrw * (1 - (dropPct / 100))).toFixed(1) : expectedTmrw;
   const monthlyDeficitKwh = acc.isVeryHigh ? Math.round((expectedTmrw - observedToday) * 30) : 0;
@@ -673,22 +714,21 @@ function selectAccount(acc, animateZoom = true) {
     banner.textContent = 'HIGH UNEXPLAINED USAGE DEFICIT';
 
     recCard.className = 'rec-card';
-    recHdr.innerHTML = '⚠️ ACTION REQUIRED: Meter Inspection Recommended';
-    recDesc.innerHTML = `This household displays a sustained <strong>${dropPct}% drop</strong> below expected baseline. Estimated unbilled energy is <strong>~${monthlyDeficitKwh} kWh/mo ($${unbilledDollars})</strong>. Dispatch technician for physical meter check.`;
+    recHdr.innerHTML = '⚠️ ACTION REQUIRED: Meter Audit Recommended';
+    recDesc.innerHTML = `Sustained <strong>${dropPct}% drop</strong> below expected baseline. Estimated unbilled energy is <strong>~${monthlyDeficitKwh} kWh/mo ($${unbilledDollars})</strong>. Dispatch technician for physical meter audit.`;
   } else {
     banner.className = 'risk-banner normal';
     banner.textContent = 'NORMAL OPERATING BASELINE';
 
     recCard.className = 'rec-card normal';
     recHdr.innerHTML = '✅ NO ACTION NEEDED: Normal Usage Profile';
-    recDesc.innerHTML = `Observed consumption matches expected daily baseline (${expectedTmrw} kWh). Meter functioning within standard operational limits.`;
+    recDesc.innerHTML = `Observed consumption matches expected daily baseline (${expectedTmrw} kWh). Meter functioning within normal limits.`;
   }
 
   drawTelemetryChart(acc);
 
-  // Smooth Camera Zoom Focus into clicked 3D tile
   if (animateZoom) {
-    targetScale = 1.5;
+    targetScale = 1.4;
     const viewportWidth = viewport.clientWidth;
     const viewportHeight = viewport.clientHeight;
 
@@ -697,6 +737,7 @@ function selectAccount(acc, animateZoom = true) {
 
     targetPanX = (viewportWidth / 2) - (boxCenterX * targetScale);
     targetPanY = (viewportHeight / 2) - (boxCenterY * targetScale);
+    clampBounds();
   }
 }
 
@@ -717,7 +758,7 @@ function drawTelemetryChart(acc) {
   const dropAmount = acc.risk_score >= 0.75 ? ch * 0.45 : 0;
 
   // Expected Line
-  cctx.strokeStyle = 'rgba(0, 240, 255, 0.4)';
+  cctx.strokeStyle = 'rgba(255, 153, 0, 0.4)';
   cctx.setLineDash([4, 4]);
   cctx.beginPath();
   cctx.moveTo(0, baseline);
@@ -726,7 +767,7 @@ function drawTelemetryChart(acc) {
   cctx.setLineDash([]);
 
   // Observed Line
-  cctx.strokeStyle = acc.risk_score >= 0.75 ? '#ef4444' : '#00f0ff';
+  cctx.strokeStyle = acc.risk_score >= 0.75 ? '#ef4444' : '#ff9900';
   cctx.lineWidth = 2;
   cctx.beginPath();
 
@@ -751,6 +792,7 @@ function resetTransform() {
   targetScale = 0.75;
   targetPanX = 90;
   targetPanY = 90;
+  clampBounds();
 }
 
 // Search Handler
