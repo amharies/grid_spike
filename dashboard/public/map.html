@@ -99,7 +99,7 @@
 
     canvas { display: block; width: 100%; height: 100%; }
 
-    /* Viewport Top Bar (CLEAN FLEX CONTAINER - NO OVERLAP) */
+    /* Viewport Top Bar (FULL 42,372 DATA SLIDER CONTROL) */
     .viewport-bar {
       position: absolute; top: 14px; left: 14px; right: 14px; z-index: 10;
       display: flex; align-items: center; justify-content: space-between; gap: 16px;
@@ -115,19 +115,37 @@
     }
 
     .viewport-tools {
-      display: flex; align-items: center; gap: 8px;
+      display: flex; align-items: center; gap: 12px;
     }
-    .tool-btn, .tool-select {
+
+    /* Slider Container Styling for 42,372 Dataset */
+    .slider-box {
+      background: rgba(5, 5, 8, 0.9); border: 1px solid var(--border);
+      padding: 6px 14px; border-radius: 6px; display: flex; align-items: center; gap: 10px;
+      font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text);
+    }
+    .slider-box input[type="range"] {
+      width: 180px; accent-color: var(--btc-orange); cursor: pointer;
+    }
+    .slider-val { font-weight: 800; color: var(--gold); }
+
+    .preset-btn {
+      background: rgba(255, 153, 0, 0.1); border: 1px solid var(--border);
+      color: var(--btc-orange); padding: 3px 8px; font-size: 10px; font-family: 'JetBrains Mono', monospace;
+      border-radius: 4px; cursor: pointer; transition: all 0.15s;
+    }
+    .preset-btn:hover { background: rgba(255, 153, 0, 0.25); color: #fff; }
+
+    .tool-btn {
       background: rgba(5, 5, 8, 0.9); border: 1px solid var(--border);
       color: var(--text); padding: 8px 14px; font-size: 11px; font-family: 'JetBrains Mono', monospace;
       border-radius: 6px; cursor: pointer; transition: all 0.15s; display: flex; align-items: center; gap: 6px;
       outline: none;
     }
-    .tool-btn:hover, .tool-btn.active, .tool-select:focus {
+    .tool-btn:hover, .tool-btn.active {
       border-color: var(--gold); color: var(--gold); background: rgba(255, 153, 0, 0.15);
       box-shadow: 0 0 12px var(--btc-glow);
     }
-    .tool-select option { background: #050508; color: #fff; }
 
     .viewport-search {
       position: absolute; bottom: 14px; left: 14px; z-index: 10;
@@ -224,12 +242,12 @@
       <div class="brand">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
         AI 02 — SMART GRID INTELLIGENCE
-        <span class="brand-tag">SCATTERED SPATIAL MATRIX</span>
+        <span class="brand-tag">FULL 42,372 CORPUS PERCEPTION</span>
       </div>
 
       <div class="hdr-metrics">
         <div class="hdr-stat"><span class="lbl">TOTAL CORPUS:</span> <span class="val gold">42,372</span></div>
-        <div class="hdr-stat"><span class="lbl">DISPLAYED TILES:</span> <span class="val gold" id="h-total">0</span></div>
+        <div class="hdr-stat"><span class="lbl">DISPLAYED ACCOUNTS:</span> <span class="val gold" id="h-total">0</span></div>
         <div class="hdr-stat"><span class="lbl">HIGH RISK ALERTS:</span> <span class="val red" id="h-critical">0</span></div>
         <div class="hdr-stat"><span class="lbl">PRECISION@50:</span> <span class="val gold">72.0%</span></div>
       </div>
@@ -237,20 +255,21 @@
 
     <!-- MAIN GRID CANVAS VIEWPORT -->
     <div id="viewport">
-      <!-- TOP BAR FLEX CONTAINER (NO OVERLAP) -->
+      <!-- TOP BAR FLEX CONTAINER WITH FULL 42,372 DATASET SLIDER -->
       <div class="viewport-bar">
-        <div class="hud-title">SCATTERED SPATIAL GRID // CLICK BOX TO FOCUS</div>
+        <div class="hud-title">MODEL SPATIAL MATRIX // SCATTERED PERCEPTION</div>
+
         <div class="viewport-tools">
-          <label style="font-size:11px; color:var(--muted); font-family:'JetBrains Mono',monospace; display:flex; align-items:center; gap:6px;">
-            GRID SIZE:
-            <select id="gridLimitSelect" class="tool-select" onchange="changeGridLimit(this.value)">
-              <option value="100">Top 100</option>
-              <option value="250" selected>Top 250</option>
-              <option value="500">Top 500</option>
-              <option value="1000">Top 1,000</option>
-              <option value="2500">Top 2,500</option>
-            </select>
-          </label>
+          <!-- FULL 42,372 DATASET RANGE SLIDER -->
+          <div class="slider-box">
+            <span>DENSITY:</span>
+            <input type="range" id="gridSlider" min="100" max="42372" step="250" value="500" oninput="updateSliderVal(this.value)" onchange="changeGridLimit(this.value)" />
+            <span class="slider-val" id="sliderValLabel">500</span> / 42,372
+            <button class="preset-btn" onclick="setPresetLimit(1000)">1K</button>
+            <button class="preset-btn" onclick="setPresetLimit(5000)">5K</button>
+            <button class="preset-btn" onclick="setPresetLimit(10000)">10K</button>
+            <button class="preset-btn" onclick="setPresetLimit(42372)">ALL 42K</button>
+          </div>
 
           <button class="tool-btn active" id="btn-all" onclick="setFilter('all')">ALL TILES</button>
           <button class="tool-btn" id="btn-critical" onclick="setFilter('critical')">RED SUSPICIOUS ONLY</button>
@@ -271,7 +290,7 @@
       <div class="panel-box">
         <div class="panel-hdr">
           <span>HOUSEHOLD PROFILE</span>
-          <span style="font-size:10px; color:var(--muted)" id="sec-type">MODEL O2 RANKED</span>
+          <span style="font-size:10px; color:var(--muted)" id="sec-type">MODEL INFERRED PREDICTIONS</span>
         </div>
 
         <div id="selected-content">
@@ -326,7 +345,7 @@
       <div class="panel-box">
         <div class="panel-hdr">SYSTEM FLEET STATUS</div>
         <div style="font-size:12px; color:var(--muted); line-height: 1.6">
-          <strong style="color:var(--gold)">Corpus Coverage:</strong> 42,372 meters screened.<br/>
+          <strong style="color:var(--gold)">Full Corpus Perceived:</strong> 42,372 meters trained.<br/>
           <strong style="color:var(--red)">Red Anomaly Threshold:</strong> Top 50 ranked high-risk accounts scattered spatially.<br/>
           <strong style="color:var(--text)">Precision Guarantee:</strong> 72% precision in top-50 queue.
         </div>
@@ -337,7 +356,7 @@
     <footer>
       <div class="status-indicator">
         <div class="pulse-dot"></div>
-        SYSTEM OPERATIONAL // SCATTERED SPATIAL DISTRIBUTION ACTIVE
+        SYSTEM OPERATIONAL // FULL 42,372 CORPUS DENSITY SLIDER ACTIVE
       </div>
       <div>RESTRICTED BOUNDED ZOOM ACTIVE</div>
     </footer>
@@ -351,14 +370,19 @@
 
 <script>
 /* ================================================================
-   SCATTERED SPATIAL GRID MATRIX CONTROLLER
+   MODEL INFERRED SPATIAL GRID MATRIX CONTROLLER FOR UP TO 42,372 DATASET
    ================================================================ */
 const API_BASE = 'http://localhost:8000';
 
 let accounts = [];
 let gridData = [];
 let activeFilter = 'all';
-let currentLimit = 250;
+let currentLimit = 500;
+
+// Dynamic Matrix Grid Dimensions
+let BOX_SIZE = 80;
+let BOX_GAP = 56;
+let COLS = 16;
 
 // Transform matrix state
 let scale = 0.75;
@@ -373,23 +397,38 @@ let startX = 0, startY = 0;
 let selectedAccount = null;
 let hoveredAccount = null;
 
-const BOX_SIZE = 80;
-const BOX_GAP = 56;
-const COLS = 14;
-
 const canvas = document.getElementById('gridCanvas');
 const ctx = canvas.getContext('2d');
 const viewport = document.getElementById('viewport');
 
-/* ── Fetch Model o2 Ranked Accounts ────────────────────────────── */
+function updateSliderVal(val) {
+  document.getElementById('sliderValLabel').textContent = parseInt(val, 10).toLocaleString();
+}
+
+function setPresetLimit(val) {
+  document.getElementById('gridSlider').value = val;
+  updateSliderVal(val);
+  changeGridLimit(val);
+}
+
+/* ── Fetch Model Inferred Ranked Accounts Up To 42,372 ──────────────── */
 async function loadData(limit = currentLimit) {
-  currentLimit = limit;
+  currentLimit = parseInt(limit, 10);
+  document.getElementById('sliderValLabel').textContent = currentLimit.toLocaleString();
+
+  // Adapt column count & box dimensions for large dataset density
+  if (currentLimit > 20000) { COLS = 80; BOX_SIZE = 45; BOX_GAP = 28; }
+  else if (currentLimit > 10000) { COLS = 60; BOX_SIZE = 55; BOX_GAP = 34; }
+  else if (currentLimit > 3000) { COLS = 40; BOX_SIZE = 65; BOX_GAP = 40; }
+  else if (currentLimit > 1000) { COLS = 25; BOX_SIZE = 75; BOX_GAP = 48; }
+  else { COLS = 16; BOX_SIZE = 80; BOX_GAP = 56; }
+
   try {
-    const res = await fetch(`${API_BASE}/api/accounts?limit=${limit}`);
+    const res = await fetch(`${API_BASE}/api/accounts?limit=${currentLimit}`);
     accounts = await res.json();
   } catch (err) {
     console.warn("API offline, fallback dataset generated", err);
-    accounts = Array.from({ length: limit }, (_, i) => ({
+    accounts = Array.from({ length: currentLimit }, (_, i) => ({
       CONS_NO: `ACC_${(10000 + i).toString(16).toUpperCase()}`,
       risk_score: i < 35 ? 0.1388 : 0.05,
       normalized_risk_score: i < 35 ? 0.95 - (i * 0.003) : 0.4 - (i * 0.001),
@@ -402,7 +441,6 @@ async function loadData(limit = currentLimit) {
   }
 
   // Deterministic Spatial Scattering Permutation
-  // Uses a coprimed hash multiplier so high-risk accounts are evenly scattered across the matrix slots
   const totalTiles = accounts.length;
   const scatteredSlots = Array.from({ length: totalTiles }, (_, i) => (i * 97) % totalTiles);
 
@@ -432,7 +470,7 @@ async function loadData(limit = currentLimit) {
     };
   });
 
-  document.getElementById('h-total').textContent = gridData.length;
+  document.getElementById('h-total').textContent = gridData.length.toLocaleString();
   document.getElementById('h-critical').textContent = gridData.filter(a => a.isVeryHigh).length;
 
   if (gridData.length > 0) {
@@ -441,7 +479,7 @@ async function loadData(limit = currentLimit) {
 }
 
 function changeGridLimit(val) {
-  loadData(parseInt(val, 10));
+  loadData(val);
 }
 
 /* ── Canvas Resize & Animation Loop ────────────────────────────── */
@@ -462,11 +500,11 @@ function clampBounds() {
   const vw = canvas.width;
   const vh = canvas.height;
 
-  const minScaleX = (vw * 0.7) / gridW;
-  const minScaleY = (vh * 0.7) / gridH;
-  const minScale = Math.max(minScaleX, minScaleY, 0.4);
+  const minScaleX = (vw * 0.65) / gridW;
+  const minScaleY = (vh * 0.65) / gridH;
+  const minScale = Math.max(minScaleX, minScaleY, 0.08);
 
-  targetScale = Math.min(Math.max(targetScale, minScale), 2.5);
+  targetScale = Math.min(Math.max(targetScale, minScale), 3.0);
 
   const maxPanX = vw * 0.5;
   const minPanX = vw * 0.5 - (gridW * targetScale);
