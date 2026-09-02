@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { Search, ChevronRight, ChevronUp, ChevronDown } from 'lucide-react';
+import { Search, ChevronRight, ChevronUp, ChevronDown, Download } from 'lucide-react';
 
 const getRiskLabel = (score) => {
   if (score >= 0.75) return { label: 'Very High', class: 'very-high' };
@@ -62,6 +62,37 @@ const InvestigationQueue = ({ accounts, onSelectAccount }) => {
     return sortConfig.direction === 'asc' ? <ChevronUp size={14} style={{ display: 'inline', marginLeft: '4px', color: 'var(--gold)' }}/> : <ChevronDown size={14} style={{ display: 'inline', marginLeft: '4px', color: 'var(--gold)' }}/>;
   };
 
+  const exportToCSV = () => {
+    const headers = ['Rank', 'Account ID', 'Risk Score', 'Risk Band', 'Drop Magnitude (%)', 'Missing Rate (%)'];
+    
+    const rows = sortedAndFiltered.map((acc, idx) => {
+      const score = acc.normalized_risk_score !== undefined ? acc.normalized_risk_score : (acc.risk_score || 0);
+      const risk = getRiskLabel(score);
+      const shiftKwh = acc.recent_mean_shift || 0;
+      const baseMean = acc.consumption_mean || 1;
+      const drop = ((shiftKwh / baseMean) * 100).toFixed(1);
+      const missingRate = ((acc.missing_rate || 0) * 100).toFixed(1);
+      
+      return [
+        acc.rank || idx + 1,
+        acc.CONS_NO,
+        score.toFixed(4),
+        risk.label,
+        drop,
+        missingRate
+      ].join(',');
+    });
+    
+    const csvContent = [headers.join(','), ...rows].join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.setAttribute("download", "investigation_queue.csv");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', animation: 'fadeIn 0.4s ease-out' }}>
       
@@ -71,18 +102,28 @@ const InvestigationQueue = ({ accounts, onSelectAccount }) => {
           <p style={{ color: 'var(--text-muted)', fontSize: '13px', fontFamily: 'JetBrains Mono, monospace', marginTop: '6px' }}>Review ranked accounts prioritizing the highest risk anomalies.</p>
         </div>
         
-        <div style={{ position: 'relative' }}>
-          <Search style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--muted)' }} size={16} />
-          <input 
-            type="text" 
-            placeholder="Search Account ID..." 
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            style={{ 
-              background: 'var(--surface)', border: '1px solid var(--border)', color: '#fff',
-              borderRadius: '6px', padding: '8px 12px 8px 36px', outline: 'none', fontFamily: 'JetBrains Mono', fontSize: '12px', width: '260px'
-            }}
-          />
+        <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+          <div style={{ position: 'relative' }}>
+            <Search style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--muted)' }} size={16} />
+            <input 
+              type="text" 
+              placeholder="Search Account ID..." 
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              style={{ 
+                background: 'var(--surface)', border: '1px solid var(--border)', color: '#fff',
+                borderRadius: '6px', padding: '8px 12px 8px 36px', outline: 'none', fontFamily: 'JetBrains Mono', fontSize: '12px', width: '260px'
+              }}
+            />
+          </div>
+          <button 
+            onClick={exportToCSV}
+            style={{
+              background: 'rgba(255, 153, 0, 0.1)', border: '1px solid var(--gold)', color: 'var(--gold)',
+              padding: '8px 16px', borderRadius: '6px', cursor: 'pointer', fontFamily: 'Orbitron', fontSize: '12px', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '8px'
+            }}>
+            <Download size={14} /> Export CSV
+          </button>
         </div>
       </div>
 
