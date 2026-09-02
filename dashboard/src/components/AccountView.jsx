@@ -26,8 +26,15 @@ const AccountView = ({ account, onBack }) => {
   const riskClass = account.normalized_risk_score >= 0.75 ? 'very-high' : 
                     account.normalized_risk_score >= 0.5 ? 'high' : 'normal';
 
-  const dropMagnitude = (account.recent_mean_shift * 100).toFixed(1);
-  const isDrop = account.recent_mean_shift < 0;
+  // Fix: recent_mean_shift is in raw kWh. Calculate percentage relative to consumption_mean.
+  const shiftKwh = account.recent_mean_shift || 0;
+  const baseMean = account.consumption_mean || 1; // prevent div by zero
+  const dropPctValue = (shiftKwh / baseMean) * 100;
+  const dropMagnitude = Math.abs(dropPctValue).toFixed(1);
+  const isDrop = shiftKwh < 0;
+
+  // Fix: The CSV column is 'missing_rate', not 'missing_pct_shift'
+  const missingRate = (account.missing_rate || 0) * 100;
 
   return (
     <div style={{ padding: '24px', animation: 'fadeIn 0.4s ease-out', maxWidth: '1400px', margin: '0 auto' }}>
@@ -101,13 +108,13 @@ const AccountView = ({ account, onBack }) => {
 
         <div className="c-tile">
           <div className="lbl" style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--gold)' }}>
-            <ZapOff size={14} /> Missingness Shift
+            <ZapOff size={14} /> Missingness
           </div>
           <div className="val">
-            {(account.missingness_shift * 100).toFixed(1)} pts
+            {missingRate.toFixed(1)}%
           </div>
           <div className="sub" style={{ marginTop: '12px', lineHeight: '1.4' }}>
-            Increase in incomplete readings near the same change window.
+            Overall rate of incomplete readings for this account.
           </div>
         </div>
 
@@ -153,7 +160,7 @@ const AccountView = ({ account, onBack }) => {
                     labelFormatter={(val) => `Date: ${val.split('T')[0]}`}
                   />
                   <Legend wrapperStyle={{ fontFamily: 'JetBrains Mono', fontSize: '12px', paddingTop: '10px' }} />
-                  <ReferenceLine x={timeline[timeline.length - 46]?.date} stroke="#ef4444" strokeDasharray="3 3" label={{ position: 'top', value: 'CHANGE', fill: '#ef4444', fontSize: 10 }} />
+                  <ReferenceLine x={timeline[timeline.length - 31]?.date} stroke="#ef4444" strokeDasharray="3 3" label={{ position: 'top', value: 'CHANGE', fill: '#ef4444', fontSize: 10 }} />
                   <Line type="monotone" dataKey="expected" name="Expected baseline" stroke="#94a3b8" strokeWidth={2} dot={false} strokeDasharray="5 5" />
                   <Line type="monotone" dataKey="actual" name="Actual load" stroke="#ff9900" strokeWidth={2.5} dot={false} />
                 </LineChart>
@@ -177,7 +184,7 @@ const AccountView = ({ account, onBack }) => {
             <li style={{ display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
               <div style={{ width: '22px', height: '22px', borderRadius: '50%', background: 'rgba(239, 68, 68, 0.2)', color: '#ef4444', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '11px', fontWeight: 'bold', flexShrink: 0, marginTop: '2px' }}>1</div>
               <p style={{ fontSize: '13px', color: 'var(--text-muted)', lineHeight: '1.5' }}>
-                Consumption drifted below expected baseline by {Math.abs(dropMagnitude)}% over the review window.
+                Consumption drifted below expected baseline by {dropMagnitude}% over the review window.
               </p>
             </li>
             <li style={{ display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
@@ -189,7 +196,7 @@ const AccountView = ({ account, onBack }) => {
             <li style={{ display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
               <div style={{ width: '22px', height: '22px', borderRadius: '50%', background: 'rgba(239, 68, 68, 0.2)', color: '#ef4444', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '11px', fontWeight: 'bold', flexShrink: 0, marginTop: '2px' }}>3</div>
               <p style={{ fontSize: '13px', color: 'var(--text-muted)', lineHeight: '1.5' }}>
-                Missingness increased by {(account.missingness_shift * 100).toFixed(1)} percentage points, strengthening the confidence in the pattern.
+                Missingness currently stands at {missingRate.toFixed(1)}%, strengthening the confidence in the pattern.
               </p>
             </li>
           </ul>

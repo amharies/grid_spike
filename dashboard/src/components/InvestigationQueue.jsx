@@ -96,7 +96,7 @@ const InvestigationQueue = ({ accounts, onSelectAccount }) => {
                 <th style={{ padding: '16px', cursor: 'pointer', userSelect: 'none' }} onClick={() => handleSort('score')}>Risk Score <SortIcon columnKey="score" /></th>
                 <th style={{ padding: '16px', cursor: 'pointer', userSelect: 'none' }} onClick={() => handleSort('score')}>Risk Band <SortIcon columnKey="score" /></th>
                 <th style={{ padding: '16px', cursor: 'pointer', userSelect: 'none' }} onClick={() => handleSort('drop')}>Drop Magnitude <SortIcon columnKey="drop" /></th>
-                <th style={{ padding: '16px', cursor: 'pointer', userSelect: 'none' }} onClick={() => handleSort('missing')}>Missingness Shift <SortIcon columnKey="missing" /></th>
+                <th style={{ padding: '16px', cursor: 'pointer', userSelect: 'none' }} onClick={() => handleSort('missing')}>Missing Rate <SortIcon columnKey="missing" /></th>
                 <th style={{ padding: '16px', textAlign: 'right' }}>Action</th>
               </tr>
             </thead>
@@ -104,8 +104,13 @@ const InvestigationQueue = ({ accounts, onSelectAccount }) => {
               {sortedAndFiltered.map((acc, idx) => {
                 const score = acc.normalized_risk_score !== undefined ? acc.normalized_risk_score : (acc.risk_score || 0);
                 const risk = getRiskLabel(score);
-                const drop = ((acc.recent_mean_shift || 0) * 100).toFixed(1);
-                const isDrop = (acc.recent_mean_shift || 0) < 0;
+                
+                const shiftKwh = acc.recent_mean_shift || 0;
+                const baseMean = acc.consumption_mean || 1;
+                const drop = Math.abs((shiftKwh / baseMean) * 100).toFixed(1);
+                const isDrop = shiftKwh < 0;
+                
+                const missingRate = ((acc.missing_rate || 0) * 100).toFixed(1);
                 
                 // Colorize rows based on risk
                 const rowBg = risk.class === 'very-high' ? 'rgba(239, 68, 68, 0.05)' : 'transparent';
@@ -128,11 +133,11 @@ const InvestigationQueue = ({ accounts, onSelectAccount }) => {
                     </td>
                     <td style={{ padding: '16px', fontFamily: 'JetBrains Mono', fontSize: '12px' }}>
                       <span style={{ color: isDrop ? 'var(--danger)' : '#10b981', fontWeight: 'bold' }}>
-                        {isDrop ? '' : '+'}{drop}%
+                        {isDrop ? '-' : '+'}{drop}%
                       </span>
                     </td>
                     <td style={{ padding: '16px', color: 'var(--text-muted)', fontFamily: 'JetBrains Mono', fontSize: '12px' }}>
-                      +{((acc.missingness_shift || 0) * 100).toFixed(1)} pts
+                      {missingRate}%
                     </td>
                     <td style={{ padding: '16px', textAlign: 'right' }}>
                       <button style={{ background: 'transparent', border: '1px solid var(--border)', color: 'var(--gold)', padding: '6px 12px', borderRadius: '4px', cursor: 'pointer', fontFamily: 'Orbitron', fontSize: '10px' }}>
