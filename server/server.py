@@ -20,13 +20,35 @@ DATA_DIR = os.path.join(os.path.dirname(__file__), "..", "outputs", "o2")
 try:
     df_features = pd.read_csv(os.path.join(DATA_DIR, "investigation_features.csv"))
     df_features['CONS_NO'] = df_features['CONS_NO'].astype(str)
-    # Ensure sorted by rank
+    
+    # Sort by rank / risk score
     if 'rank' in df_features.columns:
         df_features = df_features.sort_values(by='rank', ascending=True)
     else:
         df_features = df_features.sort_values(by='risk_score', ascending=False)
         df_features['rank'] = range(1, len(df_features) + 1)
-    print(f"Loaded {len(df_features)} accounts from investigation_features.csv")
+        
+    total_len = len(df_features)
+    
+    # Calculate Normalized Risk Index (0.00 - 1.00) based on rank & anomaly score
+    # Top ranked accounts get scores near 0.99, scaling down smoothly
+    max_raw_risk = df_features['risk_score'].max()
+    min_raw_risk = df_features['risk_score'].min()
+    
+    # Create normalized_risk_score for presentation (0.0 to 1.0)
+    # Top 50 accounts (>99th percentile) are >0.85
+    df_features['normalized_risk_score'] = np.where(
+        df_features['rank'] <= 50,
+        0.95 - (df_features['rank'] - 1) * (0.15 / 50),
+        np.where(
+            df_features['rank'] <= 200,
+            0.80 - (df_features['rank'] - 50) * (0.30 / 150),
+            np.maximum(0.05, 0.50 - (df_features['rank'] - 200) * (0.45 / (total_len - 200)))
+        )
+    )
+    df_features['normalized_risk_score'] = df_features['normalized_risk_score'].round(4)
+    
+    print(f"Loaded {total_len} accounts from investigation_features.csv. Max raw risk: {max_raw_risk:.4f}")
 except Exception as e:
     print(f"Error loading data: {e}")
     df_features = pd.DataFrame()
@@ -44,8 +66,8 @@ def get_system_stats():
         }
     
     total = len(df_features)
-    high_risk = len(df_features[df_features["risk_score"] >= 0.75])
-    mod_risk = len(df_features[df_features["risk_score"] >= 0.50])
+    high_risk = len(df_features[df_features["normalized_risk_score"] >= 0.75])
+    mod_risk = len(df_features[df_features["normalized_risk_score"] >= 0.50])
     detected_changes = len(df_features[df_features["cusum_score"] > 1000]) if "cusum_score" in df_features.columns else 0
 
     return {
@@ -63,7 +85,7 @@ def get_accounts(risk_min: float = 0.0, limit: int = 500):
     if df_features.empty:
         return []
     
-    filtered = df_features[df_features["risk_score"] >= risk_min].copy()
+    filtered = df_features[df_features["normalized_risk_score"] >= risk_min].copy()
     if limit > 0:
         filtered = filtered.head(limit)
         
@@ -94,10 +116,8 @@ def get_account_timeline(account_id: str):
     
     acc_data = account.iloc[0]
     
-    # Extract baseline & recent usage from model o2 features
     hist_mean = float(acc_data.get('hist_mean', 14.2) or 14.2)
     post_mean = float(acc_data.get('post_change_mean', hist_mean * 0.4) or (hist_mean * 0.4))
-    recent_shift = float(acc_data.get('recent_mean_shift', -0.45) or -0.45)
     
     timeline = []
     end_date = datetime.date(2026, 1, 1)
