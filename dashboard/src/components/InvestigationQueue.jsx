@@ -132,7 +132,7 @@ const InvestigationQueue = ({ accounts, onSelectAccount }) => {
                       </span>
                     </td>
                     <td style={{ padding: '16px', color: 'var(--text-muted)', fontFamily: 'JetBrains Mono', fontSize: '12px' }}>
-                      +{((acc.missing_pct_shift || 0) * 100).toFixed(1)} pts
+                      +{((acc.missingness_shift || 0) * 100).toFixed(1)} pts
                     </td>
                     <td style={{ padding: '16px', textAlign: 'right' }}>
                       <button style={{ background: 'transparent', border: '1px solid var(--border)', color: 'var(--gold)', padding: '6px 12px', borderRadius: '4px', cursor: 'pointer', fontFamily: 'Orbitron', fontSize: '10px' }}>

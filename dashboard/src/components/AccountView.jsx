@@ -104,7 +104,7 @@ const AccountView = ({ account, onBack }) => {
             <ZapOff size={14} /> Missingness Shift
           </div>
           <div className="val">
-            {(account.missing_pct_shift * 100).toFixed(1)} pts
+            {(account.missingness_shift * 100).toFixed(1)} pts
           </div>
           <div className="sub" style={{ marginTop: '12px', lineHeight: '1.4' }}>
             Increase in incomplete readings near the same change window.
@@ -189,7 +189,7 @@ const AccountView = ({ account, onBack }) => {
             <li style={{ display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
               <div style={{ width: '22px', height: '22px', borderRadius: '50%', background: 'rgba(239, 68, 68, 0.2)', color: '#ef4444', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '11px', fontWeight: 'bold', flexShrink: 0, marginTop: '2px' }}>3</div>
               <p style={{ fontSize: '13px', color: 'var(--text-muted)', lineHeight: '1.5' }}>
-                Missingness increased by {(account.missing_pct_shift * 100).toFixed(1)} percentage points, strengthening the confidence in the pattern.
+                Missingness increased by {(account.missingness_shift * 100).toFixed(1)} percentage points, strengthening the confidence in the pattern.
               </p>
             </li>
           </ul>
