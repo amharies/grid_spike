@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, AlertCircle, Activity, ShieldAlert, Calendar, Droplet, ZapOff, CloudRain } from 'lucide-react';
+import { ArrowLeft, AlertCircle, Activity, ShieldAlert, CloudRain, Droplet, ZapOff } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, Legend, ResponsiveContainer, ReferenceLine } from 'recharts';
 
 const AccountView = ({ account, onBack }) => {
@@ -19,159 +19,198 @@ const AccountView = ({ account, onBack }) => {
       });
   }, [account.CONS_NO]);
 
-  const riskLabel = account.risk_score >= 0.75 ? 'VERY HIGH RISK' : 
-                    account.risk_score >= 0.5 ? 'HIGH RISK' : 
-                    account.risk_score >= 0.25 ? 'MODERATE RISK' : 'LOW RISK';
+  const isHighRisk = account.risk_score >= 0.5 || account.normalized_risk_score >= 0.5;
+  const riskLabel = account.normalized_risk_score >= 0.75 ? 'VERY HIGH RISK' : 
+                    account.normalized_risk_score >= 0.5 ? 'MODERATE RISK' : 'LOW RISK';
                     
-  const riskColor = account.risk_score >= 0.75 ? 'text-danger' : 
-                    account.risk_score >= 0.5 ? 'text-warning' : 
-                    account.risk_score >= 0.25 ? 'text-primary' : 'text-success';
+  const riskClass = account.normalized_risk_score >= 0.75 ? 'very-high' : 
+                    account.normalized_risk_score >= 0.5 ? 'high' : 'normal';
 
   const dropMagnitude = (account.recent_mean_shift * 100).toFixed(1);
   const isDrop = account.recent_mean_shift < 0;
 
   return (
-    <div className="space-y-6 animate-in slide-in-from-right-4 duration-500 pb-20">
+    <div style={{ padding: '24px', animation: 'fadeIn 0.4s ease-out', maxWidth: '1400px', margin: '0 auto' }}>
       
-      {/* Header */}
-      <button 
-        onClick={onBack}
-        className="flex items-center gap-2 text-textMuted hover:text-white transition-colors"
-      >
-        <ArrowLeft size={16} /> Back to Queue
-      </button>
-
-      <div className="flex justify-between items-start">
-        <div>
-          <h1 className="text-3xl font-bold text-white uppercase font-mono">ACCOUNT {account.CONS_NO}</h1>
-          <div className="flex items-center gap-3 mt-2">
-            <span className={`font-bold ${riskColor}`}>{riskLabel}</span>
-            <span className="text-textMuted">|</span>
-            <span className="text-textMuted">Behavioural change detected</span>
-          </div>
-        </div>
+      {/* Top Navigation & Status */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+        <button 
+          onClick={onBack}
+          className="nav-btn"
+          style={{ width: 'auto', padding: '8px 16px', display: 'inline-flex', border: '1px solid var(--border)' }}
+        >
+          <ArrowLeft size={16} /> Back to queue
+        </button>
         
-        <div className="bg-surface border border-surfaceHover px-4 py-2 rounded-lg flex items-center gap-2 shadow-lg">
-          <span className="text-sm text-textMuted uppercase tracking-wider font-semibold">Status:</span>
-          <select className="bg-transparent text-white font-medium outline-none cursor-pointer">
-            <option>Unreviewed</option>
-            <option>Reviewing</option>
-            <option>Needs inspection</option>
-            <option>Cleared</option>
-            <option>Confirmed</option>
-          </select>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+          <div className={`badge-risk ${riskClass}`}>{riskLabel}</div>
+          <div className="panel-box" style={{ padding: '6px 12px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Status</span>
+            <select style={{ background: 'transparent', color: '#fff', border: 'none', outline: 'none', fontFamily: 'Inter', fontSize: '12px' }}>
+              <option>Unreviewed</option>
+              <option>Reviewing</option>
+              <option>Cleared</option>
+            </select>
+          </div>
+          <button className="nav-btn" style={{ width: 'auto', padding: '8px 16px', border: '1px solid var(--border)', color: 'var(--gold)' }}>
+            ↓ Export file
+          </button>
         </div>
       </div>
 
-      {/* Main Chart */}
-      <div className="bg-surface p-6 rounded-xl border border-surfaceHover shadow-xl">
-        <h3 className="text-lg font-semibold text-white mb-2">Consumption Timeline: Actual vs Expected</h3>
-        <p className="text-sm text-textMuted mb-6">
-          Observed consumption has remained below the model's expected baseline for the recent evaluation window.
-        </p>
-        
-        <div className="h-80">
-          {loading ? (
-            <div className="w-full h-full flex items-center justify-center">
-              <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-primary"></div>
-            </div>
-          ) : (
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={timeline} margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#2A3655" vertical={false} />
-                <XAxis dataKey="date" stroke="#9CA3AF" tick={{fill: '#9CA3AF', fontSize: 12}} tickFormatter={(val) => val.split('T')[0]} />
-                <YAxis stroke="#9CA3AF" tick={{fill: '#9CA3AF'}} />
-                <RechartsTooltip 
-                  contentStyle={{backgroundColor: '#1A233A', borderColor: '#2A3655', color: '#F3F4F6'}}
-                  labelFormatter={(val) => `Date: ${val.split('T')[0]}`}
-                />
-                <Legend />
-                <ReferenceLine x={timeline[timeline.length - 46]?.date} stroke="#EF4444" strokeDasharray="3 3" label={{ position: 'top', value: 'CHANGE DETECTED', fill: '#EF4444', fontSize: 12 }} />
-                <Line type="monotone" dataKey="expected" name="Expected Baseline" stroke="#9CA3AF" strokeWidth={2} dot={false} strokeDasharray="5 5" />
-                <Line type="monotone" dataKey="actual" name="Actual Consumption" stroke="#3B82F6" strokeWidth={2} dot={false} />
-              </LineChart>
-            </ResponsiveContainer>
-          )}
+      {/* Header Profile */}
+      <div style={{ marginBottom: '24px', position: 'relative' }}>
+        <div style={{ fontSize: '11px', color: 'var(--gold)', fontFamily: 'Orbitron', letterSpacing: '0.1em', marginBottom: '8px' }}>
+          INVESTIGATION FILE
+        </div>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+          <div className="telemetry-id" style={{ fontSize: '32px', margin: 0 }}>
+            Account {account.CONS_NO}
+          </div>
+          <div className="panel-box" style={{ padding: '8px 16px', color: 'var(--gold)', fontFamily: 'Orbitron', fontSize: '13px', display: 'flex', alignItems: 'center', gap: '8px', border: '1px solid var(--gold)' }}>
+            <Activity size={16} /> Risk score {(account.normalized_risk_score || account.risk_score).toFixed(4)}
+          </div>
         </div>
       </div>
 
-      {/* Evidence Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        
-        <div className="bg-surface p-6 rounded-xl border border-surfaceHover shadow-lg group hover:border-primary/50 transition-all">
-          <div className="flex items-center gap-3 mb-4 text-primary">
-            <Droplet size={20} />
-            <h4 className="font-semibold text-white">Behavioural Drop</h4>
+      {/* KPI 4-Grid */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px', marginBottom: '24px' }}>
+        <div className="c-tile">
+          <div className="lbl" style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#00f0ff' }}>
+            <Droplet size={14} /> Behavioural Drop
           </div>
-          <p className={`text-3xl font-bold ${isDrop ? 'text-danger' : 'text-success'} mb-2`}>
+          <div className="val" style={{ color: '#00f0ff' }}>
             {isDrop ? '' : '+'}{dropMagnitude}%
-          </p>
-          <p className="text-xs text-textMuted">
-            Average consumption after the detected change is approximately {Math.abs(dropMagnitude)}% {isDrop ? 'below' : 'above'} the pre-change baseline.
-          </p>
+          </div>
+          <div className="sub" style={{ marginTop: '12px', lineHeight: '1.4' }}>
+            Average usage deviation against the recent behavioural baseline.
+          </div>
         </div>
 
-        <div className="bg-surface p-6 rounded-xl border border-surfaceHover shadow-lg group hover:border-primary/50 transition-all">
-          <div className="flex items-center gap-3 mb-4 text-warning">
-            <Activity size={20} />
-            <h4 className="font-semibold text-white">Anomaly Score</h4>
+        <div className="c-tile">
+          <div className="lbl" style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--gold)' }}>
+            <Activity size={14} /> Anomaly Score
           </div>
-          <p className="text-3xl font-bold text-white mb-2">
+          <div className="val">
             {(account.anomaly_score || 0).toFixed(2)}
-          </p>
-          <p className="text-xs text-textMuted">
-            Isolation Forest anomaly score indicating deviation from normal multi-dimensional behaviour.
-          </p>
+          </div>
+          <div className="sub" style={{ marginTop: '12px', lineHeight: '1.4' }}>
+            Deviation from expected multi-signal usage patterns.
+          </div>
         </div>
 
-        <div className="bg-surface p-6 rounded-xl border border-surfaceHover shadow-lg group hover:border-primary/50 transition-all">
-          <div className="flex items-center gap-3 mb-4 text-primary">
-            <ZapOff size={20} />
-            <h4 className="font-semibold text-white">Missingness Shift</h4>
+        <div className="c-tile">
+          <div className="lbl" style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--gold)' }}>
+            <ZapOff size={14} /> Missingness Shift
           </div>
-          <p className="text-3xl font-bold text-white mb-2">
-            +{(account.missing_pct_shift * 100).toFixed(1)} pts
-          </p>
-          <p className="text-xs text-textMuted">
-            The proportion of missing readings increased around the detected behavioural change.
-          </p>
+          <div className="val">
+            {(account.missing_pct_shift * 100).toFixed(1)} pts
+          </div>
+          <div className="sub" style={{ marginTop: '12px', lineHeight: '1.4' }}>
+            Increase in incomplete readings near the same change window.
+          </div>
         </div>
 
-        <div className="bg-surface p-6 rounded-xl border border-surfaceHover shadow-lg group hover:border-primary/50 transition-all">
-          <div className="flex items-center gap-3 mb-4 text-primary">
-            <CloudRain size={20} />
-            <h4 className="font-semibold text-white">Peer Deviation</h4>
+        <div className="c-tile">
+          <div className="lbl" style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--gold)' }}>
+            <CloudRain size={14} /> Peer Deviation
           </div>
-          <p className="text-3xl font-bold text-white mb-2">
+          <div className="val">
             {(account.peer_dev_mean || 0).toFixed(2)}
-          </p>
-          <p className="text-xs text-textMuted">
-            Deviation from expected peer group behaviour. Negative values indicate usage lower than peers.
-          </p>
+          </div>
+          <div className="sub" style={{ marginTop: '12px', lineHeight: '1.4' }}>
+            Difference versus the expected peer consumption envelope.
+          </div>
         </div>
-
       </div>
 
-      {/* Why Flagged Panel */}
-      <div className="bg-gradient-to-br from-surface to-[#221010] p-6 rounded-xl border border-danger/30 shadow-lg">
-        <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-          <ShieldAlert className="text-danger" size={20} />
-          Why was this account flagged?
-        </h3>
-        <ul className="space-y-3">
-          <li className="flex items-start gap-3">
-            <div className="w-6 h-6 rounded-full bg-danger/20 text-danger flex items-center justify-center shrink-0 text-sm mt-0.5">1</div>
-            <p className="text-textMuted text-sm"><strong className="text-white">Consumption fell substantially</strong> below the expected baseline, indicating a drop of {Math.abs(dropMagnitude)}%.</p>
-          </li>
-          <li className="flex items-start gap-3">
-            <div className="w-6 h-6 rounded-full bg-danger/20 text-danger flex items-center justify-center shrink-0 text-sm mt-0.5">2</div>
-            <p className="text-textMuted text-sm"><strong className="text-white">Anomaly detected</strong> with an isolation score of {(account.anomaly_score || 0).toFixed(2)}.</p>
-          </li>
-          <li className="flex items-start gap-3">
-            <div className="w-6 h-6 rounded-full bg-danger/20 text-danger flex items-center justify-center shrink-0 text-sm mt-0.5">3</div>
-            <p className="text-textMuted text-sm">Data quality shifted concurrently, showing a <strong className="text-white">{(account.missing_pct_shift * 100).toFixed(1)} percentage point increase in missing readings</strong>.</p>
-          </li>
-        </ul>
+      {/* Chart & Notes Row */}
+      <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '20px' }}>
+        
+        {/* Left: Chart */}
+        <div className="panel-box" style={{ padding: '24px', height: '420px', display: 'flex', flexDirection: 'column' }}>
+          <div className="panel-hdr" style={{ borderBottom: 'none', marginBottom: '4px', fontSize: '10px' }}>CONSUMPTION PATTERN</div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+            <h3 style={{ fontSize: '20px', fontFamily: 'Orbitron', fontWeight: '800' }}>Actual vs expected load</h3>
+            <div style={{ border: '1px solid var(--border)', padding: '4px 12px', borderRadius: '16px', fontSize: '10px', color: 'var(--gold)' }}>
+              90-day window
+            </div>
+          </div>
+          
+          <div style={{ flex: 1, minHeight: 0 }}>
+            {loading ? (
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
+                <span style={{ color: 'var(--gold)', fontFamily: 'Orbitron', animation: 'pulse 1.5s infinite' }}>LOADING TELEMETRY...</span>
+              </div>
+            ) : (
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={timeline} margin={{ top: 20, right: 20, bottom: 20, left: 0 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255, 153, 0, 0.1)" vertical={false} />
+                  <XAxis dataKey="date" stroke="#94a3b8" tick={{fill: '#94a3b8', fontSize: 10, fontFamily: 'JetBrains Mono'}} tickFormatter={(val) => val.split('T')[0].substring(5)} />
+                  <YAxis stroke="#94a3b8" tick={{fill: '#94a3b8', fontSize: 10, fontFamily: 'JetBrains Mono'}} />
+                  <RechartsTooltip 
+                    contentStyle={{backgroundColor: 'rgba(5, 5, 8, 0.95)', border: '1px solid var(--gold)', color: '#fff', borderRadius: '4px', fontFamily: 'JetBrains Mono', fontSize: '12px'}}
+                    labelFormatter={(val) => `Date: ${val.split('T')[0]}`}
+                  />
+                  <Legend wrapperStyle={{ fontFamily: 'JetBrains Mono', fontSize: '12px', paddingTop: '10px' }} />
+                  <ReferenceLine x={timeline[timeline.length - 46]?.date} stroke="#ef4444" strokeDasharray="3 3" label={{ position: 'top', value: 'CHANGE', fill: '#ef4444', fontSize: 10 }} />
+                  <Line type="monotone" dataKey="expected" name="Expected baseline" stroke="#94a3b8" strokeWidth={2} dot={false} strokeDasharray="5 5" />
+                  <Line type="monotone" dataKey="actual" name="Actual load" stroke="#ff9900" strokeWidth={2.5} dot={false} />
+                </LineChart>
+              </ResponsiveContainer>
+            )}
+          </div>
+        </div>
+
+        {/* Right: Notes */}
+        <div className="panel-box" style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
+          
+          <div>
+            <div className="panel-hdr" style={{ borderBottom: 'none', marginBottom: '4px', fontSize: '10px' }}>CASE NOTES</div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <h3 style={{ fontSize: '20px', fontFamily: 'Orbitron', fontWeight: '800' }}>Why this was flagged</h3>
+              <AlertCircle size={18} color="var(--gold)" />
+            </div>
+          </div>
+
+          <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <li style={{ display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
+              <div style={{ width: '22px', height: '22px', borderRadius: '50%', background: 'rgba(239, 68, 68, 0.2)', color: '#ef4444', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '11px', fontWeight: 'bold', flexShrink: 0, marginTop: '2px' }}>1</div>
+              <p style={{ fontSize: '13px', color: 'var(--text-muted)', lineHeight: '1.5' }}>
+                Consumption drifted below expected baseline by {Math.abs(dropMagnitude)}% over the review window.
+              </p>
+            </li>
+            <li style={{ display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
+              <div style={{ width: '22px', height: '22px', borderRadius: '50%', background: 'rgba(239, 68, 68, 0.2)', color: '#ef4444', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '11px', fontWeight: 'bold', flexShrink: 0, marginTop: '2px' }}>2</div>
+              <p style={{ fontSize: '13px', color: 'var(--text-muted)', lineHeight: '1.5' }}>
+                The anomaly score reached {(account.anomaly_score || 0).toFixed(2)}, indicating a sustained deviation from the normal usage envelope.
+              </p>
+            </li>
+            <li style={{ display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
+              <div style={{ width: '22px', height: '22px', borderRadius: '50%', background: 'rgba(239, 68, 68, 0.2)', color: '#ef4444', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '11px', fontWeight: 'bold', flexShrink: 0, marginTop: '2px' }}>3</div>
+              <p style={{ fontSize: '13px', color: 'var(--text-muted)', lineHeight: '1.5' }}>
+                Missingness increased by {(account.missing_pct_shift * 100).toFixed(1)} percentage points, strengthening the confidence in the pattern.
+              </p>
+            </li>
+          </ul>
+
+          <div style={{ background: 'rgba(5, 5, 8, 0.8)', border: '1px solid var(--border)', borderRadius: '8px', padding: '16px', marginTop: 'auto' }}>
+            <div style={{ fontSize: '11px', color: 'var(--gold)', marginBottom: '4px' }}>Source dataset</div>
+            <div style={{ fontFamily: 'Orbitron', fontSize: '14px', fontWeight: '700' }}>investigation_features.csv</div>
+          </div>
+
+          <div className={isHighRisk ? "rec-card" : "rec-card normal"} style={{ margin: 0 }}>
+            <div className="rec-hdr">
+              <ShieldAlert size={16} /> Recommended action
+            </div>
+            <div>
+              {isHighRisk 
+                ? "Sustained consumption drop below expected baseline. Recommend technician dispatch for physical meter audit."
+                : "Monitor the account for another cycle and re-evaluate drift severity."}
+            </div>
+          </div>
+
+        </div>
       </div>
 
     </div>
