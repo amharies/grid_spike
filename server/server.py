@@ -136,21 +136,25 @@ def get_account_timeline(account_id: str):
     
     acc_data = account.iloc[0]
     
-    hist_mean = float(acc_data.get('hist_mean', 14.2) or 14.2)
-    post_mean = float(acc_data.get('post_change_mean', hist_mean * 0.4) or (hist_mean * 0.4))
+    # Use actual data from the dataset
+    hist_mean = float(acc_data.get('consumption_mean', 14.2) or 14.2)
+    hist_std = float(acc_data.get('consumption_std', hist_mean * 0.1) or (hist_mean * 0.1))
+    
+    post_mean = float(acc_data.get('recent_mean', hist_mean) or hist_mean)
+    post_std = float(acc_data.get('recent_std', post_mean * 0.1) or (post_mean * 0.1))
     
     timeline = []
     end_date = datetime.date(2026, 1, 1)
     
     for i in range(90):
         current_date = end_date - datetime.timedelta(days=90-i)
-        is_post_change = i >= 45
+        is_post_change = i >= 60  # recent_mean represents the last 30 days
         
         expected = hist_mean
         if is_post_change:
-            actual = max(0.5, post_mean + np.random.normal(0, post_mean * 0.1))
+            actual = max(0.1, post_mean + np.random.normal(0, post_std))
         else:
-            actual = max(0.5, hist_mean + np.random.normal(0, hist_mean * 0.08))
+            actual = max(0.1, hist_mean + np.random.normal(0, hist_std))
             
         timeline.append({
             "date": current_date.isoformat(),

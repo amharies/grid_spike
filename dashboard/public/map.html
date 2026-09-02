@@ -776,18 +776,27 @@ function selectAccount(acc, animateZoom = true) {
   document.getElementById('c-rank').textContent = `#${acc.rank || '—'}`;
   document.getElementById('c-risk-pct').textContent = `Risk Index ${displayScore}`;
 
-  const expectedTmrw = (12.5 + (acc.rank % 5) * 2.1).toFixed(1);
-  const observedToday = acc.isVeryHigh ? (expectedTmrw * (1 - (dropPct / 100))).toFixed(1) : expectedTmrw;
-  const monthlyDeficitKwh = acc.isVeryHigh ? Math.round((expectedTmrw - observedToday) * 30) : 0;
+  // Use actual data if available, otherwise fallback to mock
+  const expectedTmrw = acc.consumption_mean !== undefined ? Number(acc.consumption_mean).toFixed(1) : (12.5 + (acc.rank % 5) * 2.1).toFixed(1);
+  const observedToday = acc.recent_mean !== undefined ? Number(acc.recent_mean).toFixed(1) : (acc.isVeryHigh ? (expectedTmrw * (1 - (dropPct / 100))).toFixed(1) : expectedTmrw);
+  
+  let actualDropPct = 0;
+  if (expectedTmrw > 0) {
+      actualDropPct = Math.max(0, ((expectedTmrw - observedToday) / expectedTmrw) * 100);
+  }
+  const finalDropPct = acc.consumption_mean !== undefined ? actualDropPct.toFixed(0) : dropPct;
+
+  const monthlyDeficitKwh = acc.isVeryHigh ? Math.max(0, Math.round((expectedTmrw - observedToday) * 30)) : 0;
   const unbilledDollars = Math.round(monthlyDeficitKwh * 0.15);
 
   document.getElementById('c-exp-tmrw').textContent = `${expectedTmrw} kWh`;
   document.getElementById('c-obs-today').textContent = `${observedToday} kWh`;
-  document.getElementById('c-obs-diff').textContent = acc.isVeryHigh ? `${dropPct}% Below Baseline` : `Normal Usage`;
+  document.getElementById('c-obs-diff').textContent = acc.isVeryHigh ? `${finalDropPct}% Below Baseline` : `Normal Usage`;
   document.getElementById('c-unbilled').textContent = acc.isVeryHigh ? `~${monthlyDeficitKwh} kWh` : `0 kWh`;
   document.getElementById('c-unbilled-usd').textContent = acc.isVeryHigh ? `~$${unbilledDollars} Unbilled/Mo` : `No Deficit`;
 
   const banner = document.getElementById('sel-banner');
+
   const recCard = document.getElementById('rec-card');
   const recHdr = document.getElementById('rec-hdr');
   const recDesc = document.getElementById('rec-desc');
@@ -838,7 +847,16 @@ function drawTelemetryChart(acc) {
 
   const points = 40;
   const baseline = ch * 0.3;
-  const dropAmount = acc.isVeryHigh ? ch * 0.45 : 0;
+  
+  let dropRatio = 0;
+  if (acc.consumption_mean && acc.recent_mean) {
+     dropRatio = (acc.consumption_mean - acc.recent_mean) / acc.consumption_mean;
+     if (dropRatio < 0) dropRatio = 0;
+  } else if (acc.isVeryHigh) {
+     dropRatio = 0.45;
+  }
+  
+  const dropAmount = Math.min(dropRatio, 0.7) * ch;
 
   // Expected Line
   cctx.strokeStyle = 'rgba(255, 153, 0, 0.4)';
