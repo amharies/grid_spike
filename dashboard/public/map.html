@@ -15,18 +15,18 @@
 
     :root {
       --bg: #040812;
-      --panel-bg: rgba(8, 14, 28, 0.92);
+      --panel-bg: rgba(8, 14, 28, 0.94);
       --border-blue: #1b355a;
       --border-cyan: #00d2ff;
       --cyan: #00f0ff;
       --cyan-dim: rgba(0, 240, 255, 0.15);
       --red: #ff3b30;
-      --red-glow: rgba(255, 59, 48, 0.4);
+      --red-glow: rgba(255, 59, 48, 0.5);
       --amber: #ff9500;
       --green: #34c759;
       --text: #e1f5fe;
       --muted: #6482ad;
-      --dim: #253a56;
+      --dim: #1c2d42;
     }
 
     html, body {
@@ -42,14 +42,14 @@
       display: block; position: absolute; top: 0; left: 0; bottom: 0; right: 0;
       background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
       background-size: 100% 4px;
-      z-index: 999; pointer-events: none; opacity: 0.4;
+      z-index: 999; pointer-events: none; opacity: 0.35;
     }
 
     /* ── LAYOUT CONTAINER ────────────────────────────────────────── */
     #app {
       display: grid;
       grid-template-rows: 48px 1fr 28px;
-      grid-template-columns: 1fr 380px;
+      grid-template-columns: 1fr 400px;
       height: 100vh; width: 100vw;
     }
 
@@ -109,7 +109,7 @@
 
     .viewport-tools {
       position: absolute; top: 16px; right: 16px; z-index: 10;
-      display: flex; items-center; gap: 8px;
+      display: flex; align-items: center; gap: 8px;
     }
     .tool-btn {
       background: var(--panel-bg); border: 1px solid var(--border-blue);
@@ -123,12 +123,12 @@
 
     .viewport-search {
       position: absolute; bottom: 16px; left: 16px; z-index: 10;
-      display: flex; items-center; gap: 8px; background: var(--panel-bg);
+      display: flex; align-items: center; gap: 8px; background: var(--panel-bg);
       border: 1px solid var(--border-blue); padding: 4px 8px; border-radius: 4px;
     }
     .viewport-search input {
       background: transparent; border: none; outline: none; color: var(--text);
-      font-family: 'JetBrains Mono', monospace; font-size: 12px; width: 180px;
+      font-family: 'JetBrains Mono', monospace; font-size: 12px; width: 220px;
     }
     .viewport-search input::placeholder { color: var(--muted); }
 
@@ -173,7 +173,7 @@
       letter-spacing: 0.05em; margin-bottom: 14px;
     }
     .risk-banner.critical { background: rgba(255, 59, 48, 0.2); border: 1px solid var(--red); color: var(--red); box-shadow: 0 0 15px var(--red-glow); }
-    .risk-banner.normal { background: rgba(52, 199, 89, 0.15); border: 1px solid var(--green); color: var(--green); }
+    .risk-banner.normal { background: rgba(0, 210, 255, 0.15); border: 1px solid var(--cyan); color: var(--cyan); }
 
     .grid-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
     .stat-tile { background: rgba(4, 10, 22, 0.8); border: 1px solid #162c4a; padding: 8px 10px; border-radius: 3px; }
@@ -195,7 +195,7 @@
     .check-tag.check { background: rgba(255, 149, 0, 0.2); color: var(--amber); border: 1px solid var(--amber); }
 
     /* Telemetry Mini Chart */
-    .mini-chart { height: 75px; width: 100%; margin-top: 8px; background: rgba(4, 8, 16, 0.9); border: 1px solid #142847; position: relative; }
+    .mini-chart { height: 85px; width: 100%; margin-top: 8px; background: rgba(4, 8, 16, 0.9); border: 1px solid #142847; position: relative; }
     canvas.chart-canvas { width: 100%; height: 100%; }
 
     /* ── FOOTER STATUS BAR ───────────────────────────────────────── */
@@ -227,14 +227,14 @@
     <header>
       <div class="brand">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-        ISLA NUBLAR SUBGRID MONITOR
-        <span class="brand-tag">TACTICAL MAP v2.0</span>
+        SPACIOUS MATRIX CONTROL // RANKED THEFT DETECT
+        <span class="brand-tag">MODEL O2 RANKED DATA</span>
       </div>
 
       <div class="hdr-metrics">
         <div class="hdr-stat"><span class="lbl">TOTAL HOUSEHOLDS:</span> <span class="val cyan" id="h-total">0</span></div>
-        <div class="hdr-stat"><span class="lbl">HIGH RISK ALERTS:</span> <span class="val red" id="h-critical">0</span></div>
-        <div class="hdr-stat"><span class="lbl">PRECISION@50:</span> <span class="val cyan">72.0%</span></div>
+        <div class="hdr-stat"><span class="lbl">SUSPICIOUS ALERTS:</span> <span class="val red" id="h-critical">0</span></div>
+        <div class="hdr-stat"><span class="lbl">PRECISION@50:</span> <span class="val cyan">72.0% (36/50)</span></div>
         <div class="hdr-stat"><span class="lbl">AUC-PR:</span> <span class="val cyan">0.2272</span></div>
       </div>
     </header>
@@ -242,12 +242,12 @@
     <!-- MAIN GRID CANVAS VIEWPORT -->
     <div id="viewport">
       <div class="viewport-hud">
-        <div class="hud-title">SECTOR MATRIX PLAN VIEW // EQUISPACED GRID</div>
+        <div class="hud-title">SPACIOUS EQUISPACED MATRIX PLAN VIEW // CLICK TILE TO PAN & ZOOM</div>
       </div>
 
       <div class="viewport-tools">
         <button class="tool-btn active" id="btn-all" onclick="setFilter('all')">ALL TILES</button>
-        <button class="tool-btn" id="btn-critical" onclick="setFilter('critical')">RED ALERTS ONLY</button>
+        <button class="tool-btn" id="btn-critical" onclick="setFilter('critical')">RED SUSPICIOUS ONLY</button>
         <button class="tool-btn" onclick="resetTransform()">RESET VIEW</button>
       </div>
 
@@ -263,22 +263,22 @@
       <!-- PANEL 1: HOUSEHOLD TELEMETRY -->
       <div class="panel-box">
         <div class="panel-hdr">
-          <span>HOUSEHOLD STATUS</span>
-          <span style="font-size:9px; color:var(--muted)" id="sec-code">GRID SECTOR A-1</span>
+          <span>HOUSEHOLD TELEMETRY</span>
+          <span style="font-size:9px; color:var(--muted)" id="sec-code">RANKED ACCOUNT</span>
         </div>
 
         <div id="selected-content">
-          <div class="telemetry-id" id="sel-id">SELECT A HOUSEHOLD BOX</div>
-          <div className="risk-banner normal" id="sel-banner">CLICK ANY GRID TILE TO INSPECT</div>
+          <div class="telemetry-id" id="sel-id">SELECT A GRID TILE</div>
+          <div class="risk-banner normal" id="sel-banner">CLICK ANY BOX TO ANIMATE & ZOOM</div>
 
           <div class="grid-stats">
-            <div class="stat-tile"><div class="st-lbl">RISK SCORE</div><div class="st-val" id="sel-risk">—</div></div>
+            <div class="stat-tile"><div class="st-lbl">MODEL RISK SCORE</div><div class="st-val" id="sel-risk">—</div></div>
             <div class="stat-tile"><div class="st-lbl">GLOBAL RANK</div><div class="st-val" id="sel-rank">—</div></div>
             <div class="stat-tile"><div class="st-lbl">DROP MAGNITUDE</div><div class="st-val" id="sel-drop">—</div></div>
             <div class="stat-tile"><div class="st-lbl">ANOMALY SCORE</div><div class="st-val" id="sel-anomaly">—</div></div>
           </div>
 
-          <div class="panel-hdr" style="margin-top:12px">BEHAVIOUR TELEMETRY (90D)</div>
+          <div class="panel-hdr" style="margin-top:12px">BEHAVIOUR WAVEFORM (ACTUAL VS BASELINE)</div>
           <div class="mini-chart">
             <canvas id="telemetryChart" class="chart-canvas"></canvas>
           </div>
@@ -287,24 +287,26 @@
 
       <!-- PANEL 2: TACTICAL CHECKLIST -->
       <div class="panel-box">
-        <div class="panel-hdr">SYS DIAGNOSTIC CHECKS</div>
+        <div class="panel-hdr">DIAGNOSTIC CHECKS</div>
         <div class="checklist" id="diagnostic-list">
-          <div class="check-item"><span>CUSUM Shift Trigger</span> <span class="check-tag clear" id="chk-cusum">CLEAR</span></div>
-          <div class="check-item"><span>Isolation Forest Score</span> <span class="check-tag clear" id="chk-iso">CLEAR</span></div>
-          <div class="check-item"><span>Missingness Anomaly</span> <span class="check-tag clear" id="chk-miss">CLEAR</span></div>
+          <div class="check-item"><span>CUSUM Change Detection</span> <span class="check-tag clear" id="chk-cusum">CLEAR</span></div>
+          <div class="check-item"><span>Isolation Forest Anomaly</span> <span class="check-tag clear" id="chk-iso">CLEAR</span></div>
+          <div class="check-item"><span>Missingness Shift</span> <span class="check-tag clear" id="chk-miss">CLEAR</span></div>
           <div class="check-item"><span>Peer Group Discrepancy</span> <span class="check-tag clear" id="chk-peer">CLEAR</span></div>
         </div>
       </div>
 
-      <!-- PANEL 3: GRID SUMMARY -->
+      <!-- PANEL 3: GRID LEGEND -->
       <div class="panel-box">
-        <div class="panel-hdr">GRID OVERVIEW</div>
+        <div class="panel-hdr">LEGEND & SYSTEM DATA</div>
         <div style="font-size:11px; color:var(--muted); line-height: 1.5">
-          Each tile represents a unique customer meter account arranged in an equal-spaced matrix layout.
+          Data sorted by Model o2 risk score (Rank #1 to #N).
           <br/><br/>
-          <span style="color:var(--red); font-weight:700">RED TILES</span>: Sustained consumption drop / High anomaly risk.
+          <span style="color:var(--red); font-weight:700">RED TILES</span>: Suspicious high risk accounts (Theft signal / Rank 1-50+).
           <br/>
-          <span style="color:var(--cyan); font-weight:700">BLUE/CYAN TILES</span>: Normal operating behavior.
+          <span style="color:var(--cyan); font-weight:700">CYAN TILES</span>: Normal operating households.
+          <br/><br/>
+          <span style="color:#ffffff; font-weight:700">CLICK ACTION</span>: Smoothly pans and zooms into the clicked box.
         </div>
       </div>
     </div>
@@ -313,10 +315,10 @@
     <footer>
       <div class="status-indicator">
         <div class="pulse-dot"></div>
-        SYSTEM OPERATIONAL // MODEL O2 ENGINE ACTIVE
+        SYSTEM OPERATIONAL // MODEL O2 RANKED DATASET LOADED
       </div>
-      <div>USE MOUSE WHEEL TO ZOOM // DRAG TO PAN GRID</div>
-      <div>DRAWING NO: 305-GRID-MATRIX</div>
+      <div>USE MOUSE WHEEL / DRAG / CLICK TO ANIMATE PAN & ZOOM</div>
+      <div>DRAWING NO: 305-SPACIOUS-GRID</div>
     </footer>
   </div>
 
@@ -328,52 +330,57 @@
 
 <script>
 /* ================================================================
-   GRID MATRIX CONTROLLER
+   SPACIOUS GRID MATRIX CONTROLLER WITH ANIMATED PAN & ZOOM
    ================================================================ */
 const API_BASE = 'http://localhost:8000';
 
 let accounts = [];
-let gridData = []; // flattened matrix of household box objects
+let gridData = [];
 let activeFilter = 'all';
 
-// Transform matrix state (Smooth Pan & Zoom)
-let scale = 1.0;
-let targetScale = 1.0;
-let panX = 40;
-let panY = 40;
-let targetPanX = 40;
-let targetPanY = 40;
+// Transform matrix state (Smooth Animated Pan & Zoom)
+let scale = 0.85;
+let targetScale = 0.85;
+let panX = 60;
+let panY = 60;
+let targetPanX = 60;
+let targetPanY = 60;
 
 let isDragging = false;
 let startX = 0, startY = 0;
 let selectedAccount = null;
 let hoveredAccount = null;
 
-// Grid layout settings
-const BOX_SIZE = 48; // Size of each square household box
-const BOX_GAP = 12;  // Equal spacing between boxes
-const COLS = 32;     // Number of columns in the grid matrix
+// More Spread Out Grid Settings:
+const BOX_SIZE = 64; // Increased size of each household box
+const BOX_GAP = 28;  // Increased spacing for clean, spread-out matrix
+const COLS = 20;     // 20 columns per row for a spacious overview
 
 const canvas = document.getElementById('gridCanvas');
 const ctx = canvas.getContext('2d');
 const viewport = document.getElementById('viewport');
 
-/* ── Fetch Data ─────────────────────────────────────────────────── */
+/* ── Fetch & Parse Ranked Model o2 Data ────────────────────────── */
 async function loadData() {
   try {
-    const res = await fetch(`${API_BASE}/api/accounts?limit=1024`);
+    const res = await fetch(`${API_BASE}/api/accounts?limit=400`);
     accounts = await res.json();
   } catch (err) {
-    console.warn("API offline, fallback dummy data generated", err);
-    // Generate dummy grid data if backend offline
-    accounts = Array.from({ length: 500 }, (_, i) => ({
+    console.warn("API offline, generating fallback ranked data", err);
+    accounts = Array.from({ length: 200 }, (_, i) => ({
       CONS_NO: `ACC_${(10000 + i).toString(16).toUpperCase()}`,
-      risk_score: Math.random() < 0.08 ? 0.85 + Math.random() * 0.14 : Math.random() * 0.4,
-      recent_mean_shift: -0.1 - Math.random() * 0.6,
-      anomaly_score: Math.random() * 0.8,
+      risk_score: i < 35 ? 0.95 - (i * 0.005) : 0.4 - (i * 0.001),
+      recent_mean_shift: i < 35 ? -0.4 - Math.random() * 0.4 : -0.05,
+      anomaly_score: i < 35 ? 0.7 + Math.random() * 0.2 : Math.random() * 0.3,
+      cusum_score: i < 35 ? 15000 + Math.random() * 5000 : 200,
+      missing_pct_shift: i < 35 ? 0.15 : 0.01,
+      FLAG: i < 35 ? 1 : 0,
       rank: i + 1
     }));
   }
+
+  // Ensure accounts are ordered by rank / risk score
+  accounts.sort((a, b) => b.risk_score - a.risk_score);
 
   // Build Grid Positions (Equal Spacing Matrix)
   gridData = accounts.map((acc, i) => {
@@ -381,25 +388,25 @@ async function loadData() {
     const row = Math.floor(i / COLS);
     const x = col * (BOX_SIZE + BOX_GAP);
     const y = row * (BOX_SIZE + BOX_GAP);
-    const isCritical = acc.risk_score >= 0.75;
-    const isHigh = acc.risk_score >= 0.5;
+    
+    // High suspicious theft signal (risk >= 0.65 or FLAG == 1)
+    const isSuspicious = acc.risk_score >= 0.65 || acc.FLAG === 1;
 
     return {
       ...acc,
       col, row, x, y,
-      isCritical,
-      isHigh,
-      color: isCritical ? '#ff3b30' : isHigh ? '#ff9500' : acc.risk_score >= 0.25 ? '#00d2ff' : '#0e2442'
+      isSuspicious,
+      color: isSuspicious ? '#ff3b30' : acc.risk_score >= 0.3 ? '#ff9500' : '#00d2ff'
     };
   });
 
   // Update Header Metrics
   document.getElementById('h-total').textContent = accounts.length;
-  document.getElementById('h-critical').textContent = accounts.filter(a => a.risk_score >= 0.75).length;
+  document.getElementById('h-critical').textContent = gridData.filter(a => a.isSuspicious).length;
 
-  // Auto Select top critical account
+  // Auto Select top critical account on load
   if (gridData.length > 0) {
-    selectAccount(gridData[0]);
+    selectAccount(gridData[0], false); // don't zoom automatically on boot
   }
 }
 
@@ -412,10 +419,10 @@ window.addEventListener('resize', resizeCanvas);
 resizeCanvas();
 
 function animate() {
-  // Smooth Lerp Pan & Zoom
-  scale += (targetScale - scale) * 0.15;
-  panX += (targetPanX - panX) * 0.15;
-  panY += (targetPanY - panY) * 0.15;
+  // Smooth Lerp Pan & Zoom (Interpolation rate 0.12 for smooth camera pan-zoom)
+  scale += (targetScale - scale) * 0.12;
+  panX += (targetPanX - panX) * 0.12;
+  panY += (targetPanY - panY) * 0.12;
 
   render();
   requestAnimationFrame(animate);
@@ -434,7 +441,7 @@ function render() {
 
   // 1. Draw Background Blueprint Grid Lines
   const bgGridSize = (BOX_SIZE + BOX_GAP);
-  ctx.strokeStyle = 'rgba(20, 40, 70, 0.4)';
+  ctx.strokeStyle = 'rgba(20, 42, 75, 0.45)';
   ctx.lineWidth = 1 / scale;
 
   const startCol = Math.floor(-panX / (bgGridSize * scale)) - 2;
@@ -453,11 +460,11 @@ function render() {
   }
   ctx.stroke();
 
-  // 2. Draw Sector Coordinate Markers
-  ctx.font = '10px "JetBrains Mono", monospace';
-  ctx.fillStyle = 'rgba(0, 240, 255, 0.3)';
-  for (let c = 0; c < COLS; c += 4) {
-    ctx.fillText(`COL ${String(c+1).padStart(2,'0')}`, c * bgGridSize, -10);
+  // 2. Draw Column & Row Indicators
+  ctx.font = '11px "JetBrains Mono", monospace';
+  ctx.fillStyle = 'rgba(0, 240, 255, 0.4)';
+  for (let c = 0; c < COLS; c++) {
+    ctx.fillText(`COL ${String(c+1).padStart(2,'0')}`, c * bgGridSize + 4, -12);
   }
 
   // 3. Render Household Boxes
@@ -465,7 +472,7 @@ function render() {
 
   gridData.forEach(box => {
     // Filter logic
-    if (activeFilter === 'critical' && !box.isCritical) return;
+    if (activeFilter === 'critical' && !box.isSuspicious) return;
 
     const isSelected = selectedAccount && selectedAccount.CONS_NO === box.CONS_NO;
     const isHovered = hoveredAccount && hoveredAccount.CONS_NO === box.CONS_NO;
@@ -473,55 +480,65 @@ function render() {
     ctx.save();
     ctx.translate(box.x, box.y);
 
-    if (box.isCritical) {
-      // Glowing Red Alert Box
-      const pulse = Math.sin(time + box.row) * 0.3 + 0.7;
+    if (box.isSuspicious) {
+      // Suspicious Red Box
+      const pulse = Math.sin(time + box.row) * 0.35 + 0.65;
       ctx.shadowColor = '#ff3b30';
-      ctx.shadowBlur = 12 * pulse;
-      ctx.fillStyle = `rgba(255, 59, 48, ${0.3 + pulse * 0.25})`;
+      ctx.shadowBlur = (isSelected ? 20 : 12) * pulse;
+      ctx.fillStyle = `rgba(255, 59, 48, ${0.35 + pulse * 0.25})`;
       ctx.fillRect(0, 0, BOX_SIZE, BOX_SIZE);
 
       ctx.strokeStyle = '#ff3b30';
       ctx.lineWidth = isSelected ? 3 : 1.5;
       ctx.strokeRect(0, 0, BOX_SIZE, BOX_SIZE);
 
-      // Warning Icon / Cross in center
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.9)';
+      // Warning Cross Symbol
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.95)';
       ctx.lineWidth = 2;
       ctx.beginPath();
-      ctx.moveTo(BOX_SIZE * 0.3, BOX_SIZE * 0.3);
-      ctx.lineTo(BOX_SIZE * 0.7, BOX_SIZE * 0.7);
-      ctx.moveTo(BOX_SIZE * 0.7, BOX_SIZE * 0.3);
-      ctx.lineTo(BOX_SIZE * 0.3, BOX_SIZE * 0.7);
+      ctx.moveTo(BOX_SIZE * 0.35, BOX_SIZE * 0.35);
+      ctx.lineTo(BOX_SIZE * 0.65, BOX_SIZE * 0.65);
+      ctx.moveTo(BOX_SIZE * 0.65, BOX_SIZE * 0.35);
+      ctx.lineTo(BOX_SIZE * 0.35, BOX_SIZE * 0.65);
       ctx.stroke();
     } else {
-      // Normal / Moderate Cyan Tile
-      ctx.shadowBlur = 0;
-      ctx.fillStyle = isSelected ? 'rgba(0, 240, 255, 0.3)' : isHovered ? 'rgba(0, 210, 255, 0.2)' : box.color;
+      // Normal / Cyan Box
+      ctx.shadowBlur = isSelected ? 12 : 0;
+      ctx.shadowColor = '#00f0ff';
+      ctx.fillStyle = isSelected ? 'rgba(0, 240, 255, 0.35)' : isHovered ? 'rgba(0, 210, 255, 0.25)' : 'rgba(14, 36, 66, 0.85)';
       ctx.fillRect(0, 0, BOX_SIZE, BOX_SIZE);
 
-      ctx.strokeStyle = isSelected ? '#00f0ff' : 'rgba(27, 53, 90, 0.8)';
-      ctx.lineWidth = isSelected ? 2 : 1;
+      ctx.strokeStyle = isSelected ? '#00f0ff' : 'rgba(0, 210, 255, 0.4)';
+      ctx.lineWidth = isSelected ? 2.5 : 1;
       ctx.strokeRect(0, 0, BOX_SIZE, BOX_SIZE);
     }
 
-    // Inner Corner Brackets for Sci-Fi aesthetic
-    if (isSelected || isHovered) {
+    // Selected Target Bracket Reticle Animation
+    if (isSelected) {
       ctx.strokeStyle = '#ffffff';
       ctx.lineWidth = 2;
-      const b = 6;
+      const b = 10;
       ctx.beginPath();
       // Top Left
-      ctx.moveTo(0, b); ctx.lineTo(0, 0); ctx.lineTo(b, 0);
+      ctx.moveTo(-4, b); ctx.lineTo(-4, -4); ctx.lineTo(b, -4);
+      // Top Right
+      ctx.moveTo(BOX_SIZE + 4 - b, -4); ctx.lineTo(BOX_SIZE + 4, -4); ctx.lineTo(BOX_SIZE + 4, b);
+      // Bottom Left
+      ctx.moveTo(-4, BOX_SIZE + 4 - b); ctx.lineTo(-4, BOX_SIZE + 4); ctx.lineTo(b, BOX_SIZE + 4);
       // Bottom Right
-      ctx.moveTo(BOX_SIZE, BOX_SIZE - b); ctx.lineTo(BOX_SIZE, BOX_SIZE); ctx.lineTo(BOX_SIZE - b, BOX_SIZE);
+      ctx.moveTo(BOX_SIZE + 4 - b, BOX_SIZE + 4); ctx.lineTo(BOX_SIZE + 4, BOX_SIZE + 4); ctx.lineTo(BOX_SIZE + 4, BOX_SIZE + 4 - b);
       ctx.stroke();
     }
 
-    // Label inside Box (Household short index)
-    ctx.fillStyle = box.isCritical ? '#ffffff' : 'rgba(225, 245, 254, 0.6)';
-    ctx.font = '9px "JetBrains Mono", monospace';
-    ctx.fillText(`#${box.rank}`, 4, 14);
+    // Rank Badge Inside Box
+    ctx.fillStyle = box.isSuspicious ? '#ffffff' : '#e1f5fe';
+    ctx.font = '10px "JetBrains Mono", monospace';
+    ctx.fillText(`#${box.rank}`, 6, 16);
+
+    // Short ID inside Box
+    ctx.fillStyle = box.isSuspicious ? '#ffcfcc' : 'rgba(100, 130, 173, 0.9)';
+    ctx.font = '8px "JetBrains Mono", monospace';
+    ctx.fillText(box.CONS_NO.substring(0, 8), 6, BOX_SIZE - 8);
 
     ctx.restore();
   });
@@ -529,7 +546,7 @@ function render() {
   ctx.restore();
 }
 
-/* ── Mouse Pan & Zoom Interactivity ─────────────────────────────── */
+/* ── Mouse Drag Interactivity ───────────────────────────────────── */
 viewport.addEventListener('mousedown', (e) => {
   if (e.button !== 0) return;
   isDragging = true;
@@ -561,7 +578,7 @@ window.addEventListener('mousemove', (e) => {
     tooltip.style.left = `${e.clientX}px`;
     tooltip.style.top = `${e.clientY}px`;
     document.getElementById('tt-id').textContent = found.CONS_NO;
-    document.getElementById('tt-val').textContent = `RISK: ${(found.risk_score).toFixed(4)} | RANK: #${found.rank}`;
+    document.getElementById('tt-val').textContent = `RANK: #${found.rank} | RISK SCORE: ${(found.risk_score).toFixed(4)}`;
   } else {
     tooltip.style.display = 'none';
   }
@@ -569,18 +586,18 @@ window.addEventListener('mousemove', (e) => {
 
 window.addEventListener('mouseup', () => { isDragging = false; });
 
+/* ── Click Handler: Smooth Pan + Zoom Camera Animation into Tile ── */
 viewport.addEventListener('click', (e) => {
   if (hoveredAccount) {
-    selectAccount(hoveredAccount);
+    selectAccount(hoveredAccount, true); // trigger zoom into clicked box
   }
 });
 
 viewport.addEventListener('wheel', (e) => {
   e.preventDefault();
   const zoomFactor = e.deltaY < 0 ? 1.15 : 0.85;
-  const nextScale = Math.min(Math.max(targetScale * zoomFactor, 0.4), 3.5);
+  const nextScale = Math.min(Math.max(targetScale * zoomFactor, 0.35), 3.5);
 
-  // Zoom toward cursor position
   const rect = canvas.getBoundingClientRect();
   const mouseX = e.clientX - rect.left;
   const mouseY = e.clientY - rect.top;
@@ -590,8 +607,8 @@ viewport.addEventListener('wheel', (e) => {
   targetScale = nextScale;
 }, { passive: false });
 
-/* ── Select & Inspect Account Telemetry ─────────────────────────── */
-function selectAccount(acc) {
+/* ── Select & Animate Zoom into Account ─────────────────────────── */
+function selectAccount(acc, animateZoom = true) {
   selectedAccount = acc;
 
   document.getElementById('sel-id').textContent = acc.CONS_NO;
@@ -601,9 +618,9 @@ function selectAccount(acc) {
   document.getElementById('sel-anomaly').textContent = (acc.anomaly_score || 0).toFixed(3);
 
   const banner = document.getElementById('sel-banner');
-  if (acc.risk_score >= 0.75) {
+  if (acc.isSuspicious) {
     banner.className = 'risk-banner critical';
-    banner.textContent = 'CRITICAL RISK // SUSTAINED ANOMALY';
+    banner.textContent = 'HIGH RISK SUSPICIOUS THEFT ACCOUNT';
   } else {
     banner.className = 'risk-banner normal';
     banner.textContent = 'NORMAL OPERATING BASELINE';
@@ -620,9 +637,23 @@ function selectAccount(acc) {
   document.getElementById('chk-miss').textContent = (acc.missing_pct_shift > 0.1) ? 'CHECK' : 'CLEAR';
 
   drawTelemetryChart(acc);
+
+  // Smooth Pan & Zoom Camera Animation into the box
+  if (animateZoom) {
+    targetScale = 1.8; // Zoom level into clicked box
+    const viewportWidth = viewport.clientWidth;
+    const viewportHeight = viewport.clientHeight;
+
+    // Center the target box in the viewport
+    const boxCenterX = acc.x + (BOX_SIZE / 2);
+    const boxCenterY = acc.y + (BOX_SIZE / 2);
+
+    targetPanX = (viewportWidth / 2) - (boxCenterX * targetScale);
+    targetPanY = (viewportHeight / 2) - (boxCenterY * targetScale);
+  }
 }
 
-/* ── Render Mini Telemetry Chart ────────────────────────────────── */
+/* ── Render Mini Telemetry Waveform Chart ────────────────────────── */
 function drawTelemetryChart(acc) {
   const chartCanvas = document.getElementById('telemetryChart');
   const cctx = chartCanvas.getContext('2d');
@@ -634,11 +665,11 @@ function drawTelemetryChart(acc) {
 
   cctx.clearRect(0, 0, cw, ch);
 
-  // Generate synthetic telemetry matching account drop
   const points = 40;
   const baseline = ch * 0.3;
-  const dropAmount = acc.risk_score >= 0.75 ? ch * 0.4 : 0;
+  const dropAmount = acc.isSuspicious ? ch * 0.45 : 0;
 
+  // Expected Baseline Line
   cctx.strokeStyle = 'rgba(0, 240, 255, 0.4)';
   cctx.setLineDash([4, 4]);
   cctx.beginPath();
@@ -647,8 +678,8 @@ function drawTelemetryChart(acc) {
   cctx.stroke();
   cctx.setLineDash([]);
 
-  // Actual curve
-  cctx.strokeStyle = acc.risk_score >= 0.75 ? '#ff3b30' : '#00f0ff';
+  // Observed Usage Line
+  cctx.strokeStyle = acc.isSuspicious ? '#ff3b30' : '#00f0ff';
   cctx.lineWidth = 2;
   cctx.beginPath();
 
@@ -670,22 +701,19 @@ function setFilter(filter) {
 }
 
 function resetTransform() {
-  targetScale = 1.0;
-  targetPanX = 40;
-  targetPanY = 40;
+  targetScale = 0.85;
+  targetPanX = 60;
+  targetPanY = 60;
 }
 
-// Search Handler
+// Search & Auto-Pan/Zoom Handler
 document.getElementById('searchInput').addEventListener('input', (e) => {
   const q = e.target.value.trim().toUpperCase();
   if (!q) return;
 
-  const match = gridData.find(b => b.CONS_NO.includes(q));
+  const match = gridData.find(b => b.CONS_NO.toUpperCase().includes(q));
   if (match) {
-    selectAccount(match);
-    // Center pan on matched box
-    targetPanX = (viewport.clientWidth / 2) - (match.x * scale);
-    targetPanY = (viewport.clientHeight / 2) - (match.y * scale);
+    selectAccount(match, true);
   }
 });
 
